@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<CustomData>
+  <CustomGroups>
+    <CustomGroup>
+      <name>Bezorggebieden</name>
+      <title>Bezorggebieden</title>
+      <extends>Organization</extends>
+      <style>Tab</style>
+      <collapse_display>0</collapse_display>
+      <help_pre></help_pre>
+      <help_post></help_post>
+      <weight>3</weight>
+      <is_active>1</is_active>
+      <table_name>civicrm_value_bezorggebieden_6</table_name>
+      <is_multiple>1</is_multiple>
+      <collapse_adv_display>0</collapse_adv_display>
+      <created_date>2014-03-07 11:02:32</created_date>
+      <is_reserved>0</is_reserved>
+    </CustomGroup>
+  </CustomGroups>
+  <CustomFields>
+    <CustomField>
+      <name>Bezorggebied_naam</name>
+      <label>Naam</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>1</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>1</weight>
+      <help_post>Naam van dit bezorggebied</help_post>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>25</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>bezorggebied_naam_9</column_name>
+      <custom_group_name>Bezorggebieden</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Start_cijfer_range</name>
+      <label>Start cijfer range</label>
+      <data_type>Int</data_type>
+      <html_type>Text</html_type>
+      <is_required>1</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>2</weight>
+      <help_post>Bijvoorbeeld 1000</help_post>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>start_cijfer_range_10</column_name>
+      <custom_group_name>Bezorggebieden</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Start_letter_range</name>
+      <label>Start letter range</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>1</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>3</weight>
+      <help_post>Bijvoorbeeld AA</help_post>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>2</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>start_letter_range_11</column_name>
+      <custom_group_name>Bezorggebieden</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Eind_cijfer_range</name>
+      <label>Eind cijfer range</label>
+      <data_type>Int</data_type>
+      <html_type>Text</html_type>
+      <is_required>1</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>4</weight>
+      <help_post>Bijvoorbeeld 9999</help_post>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>eind_cijfer_range_12</column_name>
+      <custom_group_name>Bezorggebieden</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Eind_letter_range</name>
+      <label>Eind letter range</label>
+      <data_type>String</data_type>
+      <html_type>Text</html_type>
+      <is_required>1</is_required>
+      <is_searchable>1</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>5</weight>
+      <help_post>Bijvoorbeeld ZZ</help_post>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>2</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>eind_letter_range_13</column_name>
+      <custom_group_name>Bezorggebieden</custom_group_name>
+    </CustomField>
+    <CustomField>
+      <name>Bezorger</name>
+      <label>Bezorger</label>
+      <data_type>ContactReference</data_type>
+      <html_type>Autocomplete-Select</html_type>
+      <is_required>1</is_required>
+      <is_searchable>0</is_searchable>
+      <is_search_range>0</is_search_range>
+      <weight>6</weight>
+      <help_post>Bezorger van dit specifieke gebied</help_post>
+      <is_active>1</is_active>
+      <is_view>0</is_view>
+      <text_length>255</text_length>
+      <note_columns>60</note_columns>
+      <note_rows>4</note_rows>
+      <column_name>bezorger_14</column_name>
+      <custom_group_name>Bezorggebieden</custom_group_name>
+    </CustomField>
+  </CustomFields>
+</CustomData>

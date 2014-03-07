@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<extension key="nl.sp.bezorggebieden" type="module">
+  <file>bezorggebieden</file>
+  <name>Bezorggebieden</name>
+  <description>Geeft de mogelijkheid om bezorggebieden te definieren bij een organisatie en er kunnen verschillende rapporten van de bezorgdata gegeneerd worden.</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>CiviCooP</author>
+    <email>helpdesk@civicoop.org</email>
+  </maintainer>
+  <releaseDate>2014-03-07</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.2</ver>
+  </compatibility>
+  <comments></comments>
+  <civix>
+    <namespace>CRM/Bezorggebieden</namespace>
+  </civix>
+</extension>
