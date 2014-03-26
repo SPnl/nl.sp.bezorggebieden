@@ -32,7 +32,7 @@
       <help_post>Naam van dit bezorggebied</help_post>
       <is_active>1</is_active>
       <is_view>0</is_view>
-      <text_length>25</text_length>
+      <text_length>50</text_length>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
       <column_name>bezorggebied_naam_9</column_name>
@@ -50,7 +50,7 @@
       <help_post>Bijvoorbeeld 1000</help_post>
       <is_active>1</is_active>
       <is_view>0</is_view>
-      <text_length>255</text_length>
+      <text_length>4</text_length>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
       <column_name>start_cijfer_range_10</column_name>
@@ -86,7 +86,7 @@
       <help_post>Bijvoorbeeld 9999</help_post>
       <is_active>1</is_active>
       <is_view>0</is_view>
-      <text_length>255</text_length>
+      <text_length>4</text_length>
       <note_columns>60</note_columns>
       <note_rows>4</note_rows>
       <column_name>eind_cijfer_range_12</column_name>

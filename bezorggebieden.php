@@ -201,7 +201,6 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 		// Now that we have all group data stored, let's compare them to existing data
 		foreach($mainGroupData as $groupNumber => $groupData) {
 			
-			
 			// Create the query
 			$query = "
 				SELECT * FROM `".$customGroupObject['table_name']."` WHERE
@@ -261,84 +260,70 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 						continue;
 						
 					} else {
-					
-						// Compare datasets
-						if
-						(
-							// First statement
-							(
-								(
-									($groupData['custom_'.$startIntObject['id']] >= $extraGroupData['custom_'.$startIntObject['id']])
-										AND
-									($groupData['custom_'.$startIntObject['id']] <= $extraGroupData['custom_'.$endIntObject['id']])
-								)
-									OR
-								(
-									($groupData['custom_'.$startCharObject['id']] >= $extraGroupData['custom_'.$startCharObject['id']])
-										AND
-									($groupData['custom_'.$startCharObject['id']] <= $extraGroupData['custom_'.$startCharObject['id']])
-								)
-							)
-							OR 
-							// Second statement
-							(
-								(
-									($groupData['custom_'.$endIntObject['id']] >= $extraGroupData['custom_'.$startIntObject['id']])
-										AND
-									($groupData['custom_'.$endIntObject['id']] <= $extraGroupData['custom_'.$endIntObject['id']])
-								)
-									OR
-								(
-									($groupData['custom_'.$endCharObject['id']] >= $extraGroupData['custom_'.$startCharObject['id']])
-										AND
-									($groupData['custom_'.$endCharObject['id']] <= $extraGroupData['custom_'.$startCharObject['id']])
-								)
-							)
-							OR 
-							// Third statement
-							(
-								(
-									($extraGroupData['custom_'.$startIntObject['id']] >= $groupData['custom_'.$startIntObject['id']])
-										AND
-									($extraGroupData['custom_'.$endIntObject['id']] <= $groupData['custom_'.$endIntObject['id']])
-								)
-									OR
-								(
-									($extraGroupData['custom_'.$endCharObject['id']] >= $groupData['custom_'.$startCharObject['id']])
-										AND
-									($extraGroupData['custom_'.$endCharObject['id']] <= $groupData['custom_'.$startCharObject['id']])
-								)
-							)
-							OR
-							// Fourth statement
-							(
-								(
-									($extraGroupData['custom_'.$endIntObject['id']] >= $groupData['custom_'.$startIntObject['id']])
-										AND
-									($extraGroupData['custom_'.$endIntObject['id']] <= $groupData['custom_'.$endIntObject['id']])
-								)
-									OR
-								(
-									($extraGroupData['custom_'.$endCharObject['id']] >= $groupData['custom_'.$startCharObject['id']])
-										AND
-									($extraGroupData['custom_'.$endCharObject['id']] <= $groupData['custom_'.$startCharObject['id']])
-								)
-							)
-						) {
 						
+						// Check if the current start number is smaller then current end number
+						if($groupData['custom_'.$startIntObject['id']] > $groupData['custom_'.$endIntObject['id']]) {
+							
 							// We found a match on the new data
-							$errors[$groupData['originalFieldNames'][0]] = "Opgegeven postcode range combinatie van letters en cijfers komt al voor bij een ander bezorggebied.";
-						
-						
+							$errors[$groupData['originalFieldNames'][1]] = "is groter dan opgegeven eind cijfer range";
+							$errors[$groupData['originalFieldNames'][3]] = "is kleiner dan opgegeven start cijfer range";
+											
 							// Break the loop, we found a match
 							break;
 							
 						}
-					
+						
+						// Check if the current start character is smaller then current end character
+						if($groupData['custom_'.$startCharObject['id']] > $groupData['custom_'.$endCharObject['id']]) {
+							
+							// We found a match on the new data
+							$errors[$groupData['originalFieldNames'][2]] = "is groter dan opgegeven eind letter range";
+							$errors[$groupData['originalFieldNames'][4]] = "is kleiner dan opgegeven start letter range";
+											
+							// Break the loop, we found a match
+							break;
+							
+						} 
+						
+						// Check if the current start and end number range are in between or equal to the other check number range 							
+						if(($groupData['custom_'.$startIntObject['id']] >= $extraGroupData['custom_'.$startIntObject['id']] AND $groupData['custom_'.$startIntObject['id']] <= $extraGroupData['custom_'.$endIntObject['id']]) OR ($groupData['custom_'.$endIntObject['id']] >= $extraGroupData['custom_'.$startIntObject['id']] AND $groupData['custom_'.$endIntObject['id']] <= $extraGroupData['custom_'.$endIntObject['id']])) {
+									
+							// Check if the current start and end character range are in between or equal to the other check character range	
+							if
+							(
+								(
+									($groupData['custom_'.$startCharObject['id']] >= $extraGroupData['custom_'.$startCharObject['id']] AND $groupData['custom_'.$startCharObject['id']] <= $extraGroupData['custom_'.$endCharObject['id']])
+									 
+									OR
+									 
+									($groupData['custom_'.$endCharObject['id']] >= $extraGroupData['custom_'.$startCharObject['id']] AND $groupData['custom_'.$endCharObject['id']] <= $extraGroupData['custom_'.$endCharObject['id']])
+								)
+								
+								OR
+								
+								(
+									($extraGroupData['custom_'.$startCharObject['id']] >= $groupData['custom_'.$startCharObject['id']] AND $extraGroupData['custom_'.$startCharObject['id']] <= $groupData['custom_'.$endCharObject['id']]) 
+										
+									OR 
+										
+									($groupData['custom_'.$endCharObject['id']] >= $groupData['custom_'.$startCharObject['id']] AND $groupData['custom_'.$endCharObject['id']] <= $groupData['custom_'.$endCharObject['id']])
+								)
+							)
+							{
+										
+								// We found a match on the new data
+								$errors[$groupData['originalFieldNames'][0]] = "Opgegeven postcode range combinatie van letters en cijfers komt al voor bij een ander bezorggebied.";
+												
+								// Break the loop, we found a match
+								break;
+								
+							}
+
+						} 
+	
 					}
 				
 				}
-			
 			
 			} 
 			
