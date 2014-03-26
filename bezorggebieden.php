@@ -255,6 +255,30 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 					
 					// Check if loop entry is equal to current group number
 					if($extraGroupKey == $groupNumber) {
+							
+						// Check if the current start number is smaller then current end number
+						if($groupData['custom_'.$startIntObject['id']] > $groupData['custom_'.$endIntObject['id']]) {
+							
+							// We found a match on the new data
+							$errors[$groupData['originalFieldNames'][1]] = "is groter dan opgegeven eind cijfer range";
+							$errors[$groupData['originalFieldNames'][3]] = "is kleiner dan opgegeven start cijfer range";
+											
+							// Break the loop, we found a match
+							break;
+							
+						}
+						
+						// Check if the current start character is smaller then current end character
+						if($groupData['custom_'.$startCharObject['id']] > $groupData['custom_'.$endCharObject['id']]) {
+							
+							// We found a match on the new data
+							$errors[$groupData['originalFieldNames'][2]] = "is groter dan opgegeven eind letter range";
+							$errors[$groupData['originalFieldNames'][4]] = "is kleiner dan opgegeven start letter range";
+											
+							// Break the loop, we found a match
+							break;
+							
+						}
 						
 						// They are equal, so skip
 						continue;
