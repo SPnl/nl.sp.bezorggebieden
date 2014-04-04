@@ -40,7 +40,10 @@ class CRM_Bezorggebieden_Form_Report_Tribune_Bezorging extends CRM_Report_Form {
 		$cfStartLetterRange = civicrm_api3('CustomField', 'getsingle', array("name" => "Start_letter_range", "custom_group_id" => $deliverAreaGroup['id']));
 		$cfEndLetterRange = civicrm_api3('CustomField', 'getsingle', array("name" => "Eind_letter_range", "custom_group_id" => $deliverAreaGroup['id']));
 		$cfDeliverer = civicrm_api3('CustomField', 'getsingle', array("name" => "Bezorger", "custom_group_id" => $deliverAreaGroup['id']));
-
+		
+		// Fetch membership type id
+		$msType = civicrm_api3('MembershipType', 'getsingle', array("name" => "Abonnee Tribune"));
+		
 		// Start post process
 		$this -> beginPostProcess();
 
@@ -80,7 +83,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_Bezorging extends CRM_Report_Form {
 			
 			LEFT JOIN `civicrm_contact` as `cdp` ON `cdp`.`id` = `cbzg`.`entity_id`
 			
-			WHERE (`cm`.`end_date` < NOW() OR `cm`.`end_date` IS NULL)
+			WHERE (`cm`.`status_id` IN (1, 2)) AND (`cm`.`membership_type_id` = '".$msType['id']."') 
 			
 			ORDER BY `department` ASC, `ca`.`city` ASC, `deliverer_name` ASC, `ca`.`postal_code` ASC;
 		";
@@ -93,7 +96,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_Bezorging extends CRM_Report_Form {
 
 		// Let's build the rows!
 		$this -> buildRows($sql, $rows);
-
+		
 		// Format for display
 		$this -> formatDisplay($rows);
 
@@ -106,7 +109,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_Bezorging extends CRM_Report_Form {
 	}
 
 	function alterDisplay(&$rows) {
-
+		
 		// Loop parameters
 		$currentDepartment = "";
 
@@ -178,6 +181,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_Bezorging extends CRM_Report_Form {
 
 		// Return new row array
 		$rows = $newRowArray;
+		
 
 	}
 
