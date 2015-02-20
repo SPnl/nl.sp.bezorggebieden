@@ -111,13 +111,13 @@ function bezorggebieden_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * In this hook we validate the delivering area ranges, so there's no overlapping in the records.
  *
  */
-function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$errors ) {;
+function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$errors ) {
+	
+	// Fetch the custom group properties
+	$customGroupObject		= civicrm_api3('CustomGroup', 'getsingle', array('name' => 'Bezorggebieden'));
 	
 	// Check if the posted form is the deliver area form
-	if($formName == "CRM_Contact_Form_CustomData") {
-		
-		// Fetch the custom group properties
-		$customGroupObject		= civicrm_api3('CustomGroup', 'getsingle', array('name' => 'Bezorggebieden'));
+	if($formName == "CRM_Contact_Form_CustomData" && in_array($customGroupObject['id'], array_keys($fields['hidden_custom_group_count']))) {
 		
 		// Fetch all the custom fields properties
 		$nameObject 			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorggebied_naam', 'custom_group_id' => $customGroupObject['id']));
@@ -125,232 +125,143 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 		$endIntObject 			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Eind_cijfer_range', 'custom_group_id' => $customGroupObject['id']));
 		$startCharObject 		= civicrm_api3('CustomField', 'getsingle', array('name' => 'Start_letter_range', 'custom_group_id' => $customGroupObject['id']));
 		$endCharObject 			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Eind_letter_range', 'custom_group_id' => $customGroupObject['id']));
-		$deliverPersonObject 	= civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorger', 'custom_group_id' => $customGroupObject['id']));
+		$bezorgerObject			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorging_per', 'custom_group_id' => $customGroupObject['id']));
 		
+
 		// Create an array with the filter field names
 		$filterFieldNames =  array(	
-									"custom_".$nameObject['id'], 
-									"custom_".$startIntObject['id'],  
-									"custom_".$endIntObject['id'],  
-									"custom_".$startCharObject['id'],  
-									"custom_".$endCharObject['id'],  
-									"custom_".$deliverPersonObject['id'] 
-																		 );
-		
-			
+			"custom_".$nameObject['id'], 
+			"custom_".$startIntObject['id'],  
+			"custom_".$endIntObject['id'],  
+			"custom_".$startCharObject['id'],  
+			"custom_".$endCharObject['id'],
+			"custom_".$bezorgerObject['id'],
+		);
+	
 		// Loop trough all the posted data
 		foreach($fields as $field => $value){
-			
+						
 			// Check if we find any instances of our given fields
-			if(str_ireplace($filterFieldNames, '', $field) != $field) {
+			if(str_ireplace($filterFieldNames, '', $field) != $field && !stristr($field, "id")) {
 				
-				// Skip the fields that contain identifiers
-				if(!stristr($field, "id")) {
-								
+				// Now that we have a match determine in what group it belongs
+				$groupNumber = substr($field, (strrpos($field, "_")+1));
 				
-					// Now that we have a match determine in what group it belongs
-					$groupNumber = substr($field, -1);
-					
-					// Check whether the field is new or existing
-					if(stristr(substr($field, -2), "-")) {
-					
-						// Field is new, so minus 3 characters
-						$fieldName = substr($field, 0, -3);
-					
-					} else {
-					
-						// Existing field, so minus 2 characters
-						$fieldName = substr($field, 0, -2);
-					
-					}
-					
-					// Check if field is used for storing integers it's length is equal to 4 characters
-					if
-					(
-						(
-							($fieldName == $filterFieldNames[1] AND strlen($value) != 4)
-								OR
-							($fieldName == $filterFieldNames[2] AND strlen($value) != 4)
-						)
-							OR
-						(
-							($fieldName == $filterFieldNames[3] AND strlen($value) != 2)
-								OR
-							($fieldName == $filterFieldNames[4] AND strlen($value) != 2)
-						)
-					) {
-						// Input is not valid
-						$errors[$field] = "Opgegeven waarde niet valide.";
-					}
-					
-					// Store group data and original fieldname
-					$mainGroupData[$groupNumber][$fieldName] = $value; 
-					$mainGroupData[$groupNumber]['originalFieldNames'][] = $field; 					
-					
+				// Determine fieldname
+				$fieldName = substr($field, 0, strrpos($field, "_"));
+				
+				// Check if field is used for storing integers it's length is equal to 4 characters
+				if((($fieldName == $filterFieldNames[1] AND strlen($value) != 4) OR ($fieldName == $filterFieldNames[2] AND strlen($value) != 4)) OR (($fieldName == $filterFieldNames[3] AND strlen($value) != 2) OR ($fieldName == $filterFieldNames[4] AND strlen($value) != 2))) {
+					// Input is not valid
+					$errors[$field] = "Opgegeven waarde niet valide.";
 				}
-
+				
+				// Store group data and original fieldname
+				$mainGroupData[$groupNumber][$fieldName] = $value; 
+				$mainGroupData[$groupNumber]['originalFieldNames'][] = $field;				
 			}
-		
+			
 		}
 		
-		if(is_null($errors)) break;
+		// Set range array
+		$ranges = array();
+		
+		// Determine all possible ranges within parameters
+		foreach($mainGroupData as $groupNumber => $groupData) {
+			if($groupData["custom_".$startIntObject['id']] == $groupData["custom_".$endIntObject['id']]) {
+				if($groupData["custom_".$startIntObject['id']] <= $groupData["custom_".$endCharObject['id']]) {
+					$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$startIntObject['id']];
+					$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$startCharObject['id']];
+					$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$endIntObject['id']];
+					$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$endCharObject['id']];
+					$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$bezorgerObject['id']];
+				}	else {
+					$errors[$groupData['originalFieldNames'][2]] = "waarde is groter dan de einde van de range.";
+					$errors[$groupData['originalFieldNames'][4]] = "waarde is kleiner dan de start van de range.";
+					$errors[$groupData['originalFieldNames'][1]] = "waarde is kleiner dan de start van de range.";
+					$errors[$groupData['originalFieldNames'][3]] = "waarde is kleiner dan de start van de range.";
+				}
+				$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData['originalFieldNames'][2];
+				$ranges[$groupData["custom_".$startIntObject['id']].$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData['originalFieldNames'][4];
+			} else {
+				$rangeDifference = $groupData["custom_".$endIntObject['id']] - $groupData["custom_".$startIntObject['id']];
+				for($i = 0; $i <= $rangeDifference; $i++) {
+					$currentRange = $groupData["custom_".$startIntObject['id']] + $i;
+					if($currentRange == $groupData["custom_".$startIntObject['id']]) {
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $currentRange;
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$startCharObject['id']];
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $currentRange;
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = "ZZ";
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$bezorgerObject['id']];
+					} else if($currentRange == $groupData["custom_".$endIntObject['id']]) {						
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $currentRange;
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = "AA";
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $currentRange;
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$endCharObject['id']];
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$bezorgerObject['id']];
+					} else {
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $currentRange;
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = "AA";
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $currentRange;
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = "ZZ";
+						$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData["custom_".$bezorgerObject['id']];
+					}
+					$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData['originalFieldNames'][2];
+					$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData['originalFieldNames'][4];
+					$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData['originalFieldNames'][1];
+					$ranges[$currentRange.$groupData["custom_".$startCharObject['id']].$groupData["custom_".$endCharObject['id']]][] = $groupData['originalFieldNames'][3];
+				}
+			}
+		}
 		
 		// Put all group numbers in an array
 		$groupNumbers = implode(",", array_keys($mainGroupData));
 		
 		// Now that we have all group data stored, let's compare them to existing data
-		foreach($mainGroupData as $groupNumber => $groupData) {
-			
-			// Create the query
+		foreach($ranges as $rangeKey => $rangeData) {
+			foreach($ranges as $subRangeKey => $subRangeData) {
+				if($rangeKey == $subRangeKey) continue;
+				if(
+					(
+						($rangeData[0] >= $subRangeData[0] AND $rangeData[0] <= $subRangeData[2])
+							AND
+						(($rangeData[1] >= $subRangeData[1] AND $rangeData[1] <= $subRangeData[3]) || ($rangeData[3] >= $subRangeData[1] AND $rangeData[1] <= $subRangeData[3]))
+					)
+					AND ($rangeData[4] == $subRangeData[4])
+				) {
+					$errors[$rangeData[5]] = "waarde komt in een ander range al voor (".$subRangeData[0].$subRangeData[1].$subRangeData[3].")";
+					$errors[$rangeData[6]] = "waarde komt in een ander range al voor (".$subRangeData[0].$subRangeData[1].$subRangeData[3].")";
+				}
+			}
+			// DB comparison
 			$query = "
-				SELECT * FROM `".$customGroupObject['table_name']."` WHERE
+				SELECT * 
+				FROM `".$customGroupObject['table_name']."` 
+				LEFT JOIN `civicrm_contact` ON `".$customGroupObject['table_name']."`.`entity_id` = `civicrm_contact`.`id`
+				WHERE
 				(
-					( 
-						('".$groupData['custom_'.$startIntObject['id']]."' BETWEEN `".$startIntObject['column_name']."` AND `".$endIntObject['column_name']."`)
-							AND
-						('".$groupData['custom_'.$startCharObject['id']]."' BETWEEN `".$startCharObject['column_name']."` AND `".$endCharObject['column_name']."`)
-					)
-					OR
+					('".$rangeData[0]."' BETWEEN `".$startIntObject['column_name']."` AND `".$endIntObject['column_name']."`)
+					AND
 					(
-						('".$groupData['custom_'.$endIntObject['id']]."' BETWEEN `".$startIntObject['column_name']."` AND `".$endIntObject['column_name']."`)
-							AND
-						('".$groupData['custom_'.$endCharObject['id']]."' BETWEEN `".$startCharObject['column_name']."` AND `".$endCharObject['column_name']."`)
+						('".$rangeData[1]."' BETWEEN `".$startCharObject['column_name']."` AND `".$endCharObject['column_name']."`)
+							OR
+						('".$rangeData[3]."' BETWEEN `".$startCharObject['column_name']."` AND `".$endCharObject['column_name']."`)
 					)
-					OR
-					(
-						(`".$startIntObject['column_name']."` BETWEEN '".$groupData['custom_'.$startIntObject['id']]."' AND '".$groupData['custom_'.$endIntObject['id']]."')
-							AND
-						(`".$endIntObject['column_name']."` BETWEEN '".$groupData['custom_'.$startCharObject['id']]."' AND '".$groupData['custom_'.$endCharObject['id']]."')
-					)
-					OR
-					(
-						(`".$endIntObject['column_name']."` BETWEEN '".$groupData['custom_'.$startIntObject['id']]."' AND '".$groupData['custom_'.$endIntObject['id']]."')
-							AND
-						(`".$endCharObject['column_name']."` BETWEEN '".$groupData['custom_'.$startCharObject['id']]."' AND '".$groupData['custom_'.$endCharObject['id']]."')
-					)
-				)
-				AND
-				(
-					`".$customGroupObject['table_name']."`.`id` NOT IN (".$groupNumbers.")
-				)
+				) 
+				AND (`".$bezorgerObject['column_name']."` = '".$rangeData[4]."')
+				AND `".$customGroupObject['table_name']."`.`id` NOT IN (".$groupNumbers.");
 			";
-
 			
 			// Execute query
-			$dbAdapter = CRM_Core_DAO::executeQuery($query);
+			$dbData = CRM_Core_DAO::executeQuery($query);
 			
 			// Check if we can find any records matching the parameters of this dataset 
-			if($dbAdapter->fetch()) {
-							
-				// Store errors
-				$errors[$groupData['originalFieldNames'][0]] = "Opgegeven postcode range combinatie van letters en cijfers komt al voor bij een ander bezorggebied.";
-									
-				// Break foreach loop
-				break;
-				
-			} else {
-			
-				// Loop trough all posted data except the current one
-				foreach($mainGroupData as $extraGroupKey => $extraGroupData) {
-					
-					// Check if loop entry is equal to current group number
-					if($extraGroupKey == $groupNumber) {
-							
-						// Check if the current start number is smaller then current end number
-						if($groupData['custom_'.$startIntObject['id']] > $groupData['custom_'.$endIntObject['id']]) {
-							
-							// We found a match on the new data
-							$errors[$groupData['originalFieldNames'][1]] = "is groter dan opgegeven eind cijfer range";
-							$errors[$groupData['originalFieldNames'][3]] = "is kleiner dan opgegeven start cijfer range";
-											
-							// Break the loop, we found a match
-							break;
-							
-						}
-						
-						// Check if the current start character is smaller then current end character
-						if($groupData['custom_'.$startCharObject['id']] > $groupData['custom_'.$endCharObject['id']]) {
-							
-							// We found a match on the new data
-							$errors[$groupData['originalFieldNames'][2]] = "is groter dan opgegeven eind letter range";
-							$errors[$groupData['originalFieldNames'][4]] = "is kleiner dan opgegeven start letter range";
-											
-							// Break the loop, we found a match
-							break;
-							
-						}
-						
-						// They are equal, so skip
-						continue;
-						
-					} else {
-						
-						// Check if the current start number is smaller then current end number
-						if($groupData['custom_'.$startIntObject['id']] > $groupData['custom_'.$endIntObject['id']]) {
-							
-							// We found a match on the new data
-							$errors[$groupData['originalFieldNames'][1]] = "is groter dan opgegeven eind cijfer range";
-							$errors[$groupData['originalFieldNames'][3]] = "is kleiner dan opgegeven start cijfer range";
-											
-							// Break the loop, we found a match
-							break;
-							
-						}
-						
-						// Check if the current start character is smaller then current end character
-						if($groupData['custom_'.$startCharObject['id']] > $groupData['custom_'.$endCharObject['id']]) {
-							
-							// We found a match on the new data
-							$errors[$groupData['originalFieldNames'][2]] = "is groter dan opgegeven eind letter range";
-							$errors[$groupData['originalFieldNames'][4]] = "is kleiner dan opgegeven start letter range";
-											
-							// Break the loop, we found a match
-							break;
-							
-						} 
-						
-						// Check if the current start and end number range are in between or equal to the other check number range 							
-						if(($groupData['custom_'.$startIntObject['id']] >= $extraGroupData['custom_'.$startIntObject['id']] AND $groupData['custom_'.$startIntObject['id']] <= $extraGroupData['custom_'.$endIntObject['id']]) OR ($groupData['custom_'.$endIntObject['id']] >= $extraGroupData['custom_'.$startIntObject['id']] AND $groupData['custom_'.$endIntObject['id']] <= $extraGroupData['custom_'.$endIntObject['id']])) {
-									
-							// Check if the current start and end character range are in between or equal to the other check character range	
-							if
-							(
-								(
-									($groupData['custom_'.$startCharObject['id']] >= $extraGroupData['custom_'.$startCharObject['id']] AND $groupData['custom_'.$startCharObject['id']] <= $extraGroupData['custom_'.$endCharObject['id']])
-									 
-									OR
-									 
-									($groupData['custom_'.$endCharObject['id']] >= $extraGroupData['custom_'.$startCharObject['id']] AND $groupData['custom_'.$endCharObject['id']] <= $extraGroupData['custom_'.$endCharObject['id']])
-								)
-								
-								OR
-								
-								(
-									($extraGroupData['custom_'.$startCharObject['id']] >= $groupData['custom_'.$startCharObject['id']] AND $extraGroupData['custom_'.$startCharObject['id']] <= $groupData['custom_'.$endCharObject['id']]) 
-										
-									OR 
-										
-									($groupData['custom_'.$endCharObject['id']] >= $groupData['custom_'.$startCharObject['id']] AND $groupData['custom_'.$endCharObject['id']] <= $groupData['custom_'.$endCharObject['id']])
-								)
-							)
-							{
-										
-								// We found a match on the new data
-								$errors[$groupData['originalFieldNames'][0]] = "Opgegeven postcode range combinatie van letters en cijfers komt al voor bij een ander bezorggebied.";
-												
-								// Break the loop, we found a match
-								break;
-								
-							}
+			if($dbData->fetch()) {
 
-						} 
-	
-					}
-				
-				}
-			
-			} 
-			
+				// Store errors
+				$errors[$rangeData[5]] = "Opgegeven postcode range combinatie van letters en cijfers komt al voor bij een ander bezorggebied (".$dbData->display_name." - ".$dbData->bezorggebied_naam_9.").";
+				$errors[$rangeData[6]] = "Opgegeven postcode range combinatie van letters en cijfers komt al voor bij een ander bezorggebied (".$dbData->display_name." - ".$dbData->bezorggebied_naam_9.").";
+			}
 		}
 		
 		// If we didn't find any errors, return true statement so CIVI can save the records
