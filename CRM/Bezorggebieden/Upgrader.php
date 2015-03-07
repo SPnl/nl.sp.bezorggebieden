@@ -30,7 +30,7 @@ class CRM_Bezorggebieden_Upgrader extends CRM_Bezorggebieden_Upgrader_Base {
   }
 
   public static function update_address() {
-    civicrm_api3('BezorggebiedContact', 'update', array('force' => 1));
+    civicrm_api3('BezorggebiedContact', 'update', array());
 
     return true;
   }
