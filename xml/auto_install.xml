@@ -110,23 +110,5 @@
       <column_name>eind_letter_range_13</column_name>
       <custom_group_name>Bezorggebieden</custom_group_name>
     </CustomField>
-    <CustomField>
-      <name>Bezorger</name>
-      <label>Bezorger</label>
-      <data_type>ContactReference</data_type>
-      <html_type>Autocomplete-Select</html_type>
-      <is_required>1</is_required>
-      <is_searchable>0</is_searchable>
-      <is_search_range>0</is_search_range>
-      <weight>6</weight>
-      <help_post>Bezorger van dit specifieke gebied</help_post>
-      <is_active>1</is_active>
-      <is_view>0</is_view>
-      <text_length>255</text_length>
-      <note_columns>60</note_columns>
-      <note_rows>4</note_rows>
-      <column_name>bezorger_14</column_name>
-      <custom_group_name>Bezorggebieden</custom_group_name>
-    </CustomField>
   </CustomFields>
 </CustomData>

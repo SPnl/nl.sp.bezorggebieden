@@ -112,10 +112,11 @@ function bezorggebieden_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  */
 function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$errors ) {
+
 	
 	// Fetch the custom group properties
 	$customGroupObject		= civicrm_api3('CustomGroup', 'getsingle', array('name' => 'Bezorggebieden'));
-	
+
 	// Check if the posted form is the deliver area form
 	if($formName == "CRM_Contact_Form_CustomData" && in_array($customGroupObject['id'], array_keys($fields['hidden_custom_group_count']))) {
 		
@@ -269,4 +270,30 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 		
 	}
 	
+}
+
+function bezorggebieden_civicrm_custom( $op, $groupID, $entityID, &$params ) {
+  $config = CRM_Bezorggebieden_Config_Bezorggebied::singleton();
+  if ($config->getCustomGroup('id') == $groupID) {
+    //force update of contacts
+    CRM_Core_BAO_Setting::setItem(1, 'nl.sp.bezorggebied', 'job.update.update');
+  }
+}
+
+function bezorggebieden_civicrm_customFieldOptions($fieldID, &$options, $detailedFormat = false ) {
+  CRM_Bezorggebieden_Hooks_CustomFieldOptions::options($fieldID, $options, $detailedFormat);
+}
+
+function bezorggebieden_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
+  CRM_Bezorggebieden_Hooks_Post::post($op, $objectName, $objectName, $objectRef);
+}
+
+function bezorggebieden_civicrm_tokens(&$tokens) {
+  CRM_Bezorggebieden_Tokens_Afdeling::tokens($tokens);
+}
+
+function bezorggebieden_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null)
+{
+  $afdeling_tokens = CRM_Bezorggebieden_Tokens_Afdeling::singleton();
+  $afdeling_tokens->tokenValues($values, $cids, $job, $tokens, $context);
 }
