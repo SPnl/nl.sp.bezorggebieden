@@ -29,7 +29,7 @@ class CRM_Bezorggebieden_Hooks_CustomFieldOptions {
             INNER JOIN `civicrm_contact` `c` ON `b`.`entity_id` = `c`.`id`
             INNER JOIN `civicrm_option_value` `v` ON `b`.`".$config->getBezorgingPerField('column_name')."` = `v`.`value` AND `v`.`option_group_id` = '".$config->getBezorgingPerField('option_group_id')."'
             ORDER BY `c`.`display_name`, `b`.`".$naam_field."`";
-    
+
     $dao = CRM_Core_DAO::executeQuery($sql);
     while($dao->fetch()) {
       $option = array();

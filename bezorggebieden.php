@@ -274,3 +274,7 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 function bezorggebieden_civicrm_customFieldOptions($fieldID, &$options, $detailedFormat = false ) {
   CRM_Bezorggebieden_Hooks_CustomFieldOptions::options($fieldID, $options, $detailedFormat);
 }
+
+function bezorggebieden_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
+  CRM_Bezorggebieden_Hooks_Post::post($op, $objectName, $objectName, $objectRef);
+}
