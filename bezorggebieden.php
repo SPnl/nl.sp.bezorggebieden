@@ -112,10 +112,10 @@ function bezorggebieden_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  */
 function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$form, &$errors ) {
-	
+
 	// Fetch the custom group properties
 	$customGroupObject		= civicrm_api3('CustomGroup', 'getsingle', array('name' => 'Bezorggebieden'));
-	
+
 	// Check if the posted form is the deliver area form
 	if($formName == "CRM_Contact_Form_CustomData" && in_array($customGroupObject['id'], array_keys($fields['hidden_custom_group_count']))) {
 		
@@ -269,4 +269,8 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 		
 	}
 	
+}
+
+function bezorggebieden_civicrm_customFieldOptions($fieldID, &$options, $detailedFormat = false ) {
+  CRM_Bezorggebieden_Hooks_CustomFieldOptions::options($fieldID, $options, $detailedFormat);
 }
