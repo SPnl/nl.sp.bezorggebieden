@@ -286,3 +286,13 @@ function bezorggebieden_civicrm_customFieldOptions($fieldID, &$options, $detaile
 function bezorggebieden_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   CRM_Bezorggebieden_Hooks_Post::post($op, $objectName, $objectName, $objectRef);
 }
+
+function bezorggebieden_civicrm_tokens(&$tokens) {
+  CRM_Bezorggebieden_Tokens_Afdeling::tokens($tokens);
+}
+
+function bezorggebieden_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null)
+{
+  $tokens = CRM_Bezorggebieden_Tokens_Afdeling::singleton();
+  $tokens->tokenValues($values, $cids, $job, $tokens, $context);
+}
