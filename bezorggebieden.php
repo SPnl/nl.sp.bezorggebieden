@@ -265,7 +265,11 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 		}
 		
 		// If we didn't find any errors, return true statement so CIVI can save the records
-		if(!isset($errors)) return true;
+		if(!isset($errors) || count($errors) == 0) {
+      //force update of contacts
+      CRM_Core_BAO_Setting::setItem(1, 'nl.sp.bezorggebied', 'job.update.update');
+      return true;
+    }
 		
 	}
 	

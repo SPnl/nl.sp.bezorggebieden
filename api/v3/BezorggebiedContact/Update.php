@@ -34,11 +34,11 @@ function civicrm_api3_bezorggebied_contact_update($params)
   if (isset($params['force']) && $params['force']) {
     $run = true;
     $offset = 0;
-  } elseif ($offset > 0) {
-    $run = true;
   } elseif ($update) {
     $run = true;
     $offset = 0;
+  } elseif ($offset > 0) {
+    $run = true;
   }
   $oldOffset = $offset;
 
@@ -61,6 +61,7 @@ function civicrm_api3_bezorggebied_contact_update($params)
     } else {
       $newOffset = 0;
       CRM_Core_BAO_Setting::setItem(0, 'nl.sp.bezorggebied', 'job.update.offset');
+      CRM_Core_BAO_Setting::setItem(0, 'nl.sp.bezorggebied', 'job.update.update');
     }
   }
   $returnValues[]['message'] = 'Updated '.$updated.' contacts, old offset: '.$oldOffset.' new offset: '.$newOffset;
