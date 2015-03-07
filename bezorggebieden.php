@@ -265,14 +265,18 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 		}
 		
 		// If we didn't find any errors, return true statement so CIVI can save the records
-		if(!isset($errors) || count($errors) == 0) {
-      //force update of contacts
-      CRM_Core_BAO_Setting::setItem(1, 'nl.sp.bezorggebied', 'job.update.update');
-      return true;
-    }
+		if(!isset($errors)) return true;
 		
 	}
 	
+}
+
+function bezorggebieden_civicrm_custom( $op, $groupID, $entityID, &$params ) {
+  $config = CRM_Bezorggebieden_Config_Bezorggebied::singleton();
+  if ($config->getCustomGroup('id') == $groupID) {
+    //force update of contacts
+    CRM_Core_BAO_Setting::setItem(1, 'nl.sp.bezorggebied', 'job.update.update');
+  }
 }
 
 function bezorggebieden_civicrm_customFieldOptions($fieldID, &$options, $detailedFormat = false ) {
