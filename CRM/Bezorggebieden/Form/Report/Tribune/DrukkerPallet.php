@@ -3,6 +3,8 @@
 class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Form
 {
 
+  protected $_add2groupSupported = FALSE;
+
   function __construct()
   {
     $this->_columns = array(
@@ -27,13 +29,6 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
       'civicrm_address' => array(
         'dao' => 'CRM_Core_DAO_Address',
         'fields' => array(
-        ),
-        'filters' => array(
-          'location_type_id' => array(
-            'title' => ts('Location type'),
-            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => $this->locationTypes(),
-          ),
         ),
         'grouping' => 'contact-fields',
       ),
@@ -105,10 +100,11 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
       LEFT JOIN civicrm_contact {$this->_aliases['civicrm__pallet_contact']} ON {$this->_aliases['civicrm_pallet_address']}.contact_id = {$this->_aliases['civicrm__pallet_contact']}.id";
   }
 
-  function buildQuery($applyLimit=true) {
-    $sql = parent::buildQuery($applyLimit);
-    //echo $sql; exit();
-    return $sql;
+  function where() {
+    parent::where();
+    $config = CRM_Bezorggebieden_Config_TribuneAdres::singleton();
+    $this->_where .= " AND {$this->_aliases['civicrm_address']}.location_type_id = '".$config->tribune_adres_id."'";
+    $this->_where .= " AND {$this->_aliases['civicrm_pallet_address']}.location_type_id = '".$config->tribune_adres_id."'";
   }
 
   function modifyColumnHeaders() {

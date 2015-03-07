@@ -293,6 +293,6 @@ function bezorggebieden_civicrm_tokens(&$tokens) {
 
 function bezorggebieden_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null)
 {
-  $tokens = CRM_Bezorggebieden_Tokens_Afdeling::singleton();
-  $tokens->tokenValues($values, $cids, $job, $tokens, $context);
+  $afdeling_tokens = CRM_Bezorggebieden_Tokens_Afdeling::singleton();
+  $afdeling_tokens->tokenValues($values, $cids, $job, $tokens, $context);
 }

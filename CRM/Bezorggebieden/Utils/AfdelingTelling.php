@@ -118,7 +118,8 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
             AND
             m.status_id IN (".implode(", ",CRM_Member_BAO_MembershipStatus::getMembershipStatusCurrent()).")
             AND
-            m.membership_type_id IN (".implode(", ", $config->getMembershipTypeIds()).")";
+            m.membership_type_id IN (".implode(", ", $config->getMembershipTypeIds()).")
+            GROUP BY b.id";
 
     self::$afdeling_bezorggebieden[$afdeling_id] = array();
 
