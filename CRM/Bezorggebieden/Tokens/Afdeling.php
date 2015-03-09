@@ -14,6 +14,8 @@ class CRM_Bezorggebieden_Tokens_Afdeling {
     $tokens['bezorggebieden']['bezorggebieden.losse_tribunes'] = 'Losse tribunes';
     $tokens['bezorggebieden']['bezorggebieden.losse_tribunes_large'] = 'Losse tribunes (per '.CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE.')';
     $tokens['bezorggebieden']['bezorggebieden.totaal_adresstickers'] = 'Aantal adresstickers';
+
+    $tokens['bezorggebieden']['bezorggebieden.tribune_adres'] = 'Tribune adres';
   }
 
 
@@ -55,6 +57,31 @@ class CRM_Bezorggebieden_Tokens_Afdeling {
       if (in_array('totaal_adresstickers', $tokens['bezorggebieden']) || array_key_exists('totaal_adresstickers', $tokens['bezorggebieden'])) {
         $this->totaal_adresstickers($values, $cids, $job, $tokens, $context);
       }
+      if (in_array('tribune_adres', $tokens['bezorggebieden']) || array_key_exists('tribune_adres', $tokens['bezorggebieden'])) {
+        $this->tribune_adres($values, $cids, $job, $tokens, $context);
+      }
+    }
+  }
+
+  protected function tribune_adres(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    $config = CRM_Bezorggebieden_Config_TribuneAdres::singleton();
+    foreach($cids as $cid) {
+      $adres = CRM_Core_DAO::executeQuery("SELECT * FROM `civicrm_address` WHERE `contact_id` = %1 AND `civicrm_address`.`location_type_id` = %2 ", array(
+        1 => array($cid, 'Integer'),
+        2 => array($config->tribune_adres_id, 'Integer'),
+      ));
+      $value = '';
+      if ($adres->fetch()) {
+        if ($adres->master_id) {
+          $contact_id = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM `civicrm_address` where id = %1", array(1 => array($adres->master_id, 'Integer')));
+        } else {
+          $contact_id = $adres->contact_id;
+        }
+        $value = CRM_Contact_BAO_Contact::displayName($contact_id)."<br />\r\n";
+        $value .= $adres->street_address."<br />\r\n";
+        $value .= trim($adres->postal_code." ".$adres->city);
+      }
+      $values[$cid]['bezorggebieden.tribune_adres'] = $value;
     }
   }
 
