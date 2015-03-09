@@ -21,7 +21,11 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
 
   protected $default_packages = 0;
 
+  protected $default_packges_los = 0;
+
   protected $large_packages = 0;
+
+  protected $large_packges_los = 0;
 
   protected static $afdeling_info = array();
 
@@ -43,8 +47,10 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
     $this->extra_tribunes = $extra;
     $this->total_tribunes = $this->aantal_leden + $this->extra_tribunes;
     if ($this->total_tribunes > 0) {
-      $this->default_packages = (int) ceil($this->total_tribunes / CRM_Bezorggebieden_Utils_AfdelingTelling::DEFAULT_PER_PACKAGE);
-      $this->large_packages = (int) ceil($this->total_tribunes / CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE);
+      $this->default_packages = (int) floor($this->total_tribunes / CRM_Bezorggebieden_Utils_AfdelingTelling::DEFAULT_PER_PACKAGE);
+      $this->default_packges_los = (int) ($this->total_tribunes % CRM_Bezorggebieden_Utils_AfdelingTelling::DEFAULT_PER_PACKAGE);
+      $this->large_packages = (int) floor($this->total_tribunes / CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE);
+      $this->large_packges_los = (int) ($this->total_tribunes % CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE);
     }
   }
 
@@ -64,8 +70,16 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
     return $this->default_packages;
   }
 
+  public function getDefaultPackagesLos() {
+    return $this->default_packges_los;
+  }
+
   public function getLargePackages() {
     return $this->large_packages;
+  }
+
+  public function getLargePackagesLos() {
+    return $this->large_packges_los;
   }
 
   /**

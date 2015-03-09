@@ -114,14 +114,20 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
     $this->_columnHeaders['extra'] = array(
       'title' => 'Extra tribunes',
     );
-    $this->_columnHeaders['total'] = array(
+    $this->_columnHeaders['total_tribunes'] = array(
       'title' => 'Totaal tribunes',
     );
     $this->_columnHeaders['pakken'] = array(
       'title' => 'Pakken (per '.CRM_Bezorggebieden_Utils_AfdelingTelling::DEFAULT_PER_PACKAGE.')',
     );
+    $this->_columnHeaders['pakken_los'] = array(
+      'title' => 'Los (per '.CRM_Bezorggebieden_Utils_AfdelingTelling::DEFAULT_PER_PACKAGE.')',
+    );
     $this->_columnHeaders['pakken_zomer'] = array(
       'title' => 'Pakken (per '.CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE.')',
+    );
+    $this->_columnHeaders['pakken_zomer_los'] = array(
+      'title' => 'Los (per '.CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE.')',
     );
   }
 
@@ -142,9 +148,11 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
       $afdeling_info = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($row['civicrm_contact_id']);
       $rows[$rowNum]['leden'] = $afdeling_info->getMemberCount();
       $rows[$rowNum]['extra'] = $afdeling_info->getExtraTribunes();
-      $rows[$rowNum]['total'] = $afdeling_info->getTotalTribunes();
+      $rows[$rowNum]['total_tribunes'] = $afdeling_info->getTotalTribunes();
       $rows[$rowNum]['pakken'] = $afdeling_info->getDefaultPackages();
+      $rows[$rowNum]['pakken_los'] = $afdeling_info->getDefaultPackagesLos();
       $rows[$rowNum]['pakken_zomer'] = $afdeling_info->getLargePackages();
+      $rows[$rowNum]['pakken_zomer_los'] = $afdeling_info->getLargePackagesLos();
     }
   }
 }
