@@ -64,16 +64,23 @@ class CRM_Bezorggebieden_Handler_AutoBezorggebiedLink {
     $eind_cijfer = $config->getEindCijferRangeField('column_name');
     $start_letter = $config->getStartLetterRangeField('column_name');
     $eind_letter = $config->getEindLetterRangeField('column_name');
-    $sql = "SELECT `b`.*
-            FROM `".$config->getCustomGroup('table_name')."` `b`
-            WHERE `b`.`".$config->getStartCijferRangeField('column_name')."` <= %1
-            AND `b`.`".$config->getEindCijferRangeField('column_name')."` >= %1";
 
     $params[1] = array($postcode_4pp, 'Integer');
+    $sql = "SELECT `b`.*, (`b`.`".$eind_cijfer."` - `b`.`".$start_cijfer."`) AS `verschil`";
     if (!empty($afdeling_id)) {
-      $sql .= " AND `b`.`entity_id` = %2";
+      $sql .= ", IF (`b`.`entity_id` = %2, 1, 0) AS `afdeling_match`";
       $params[2] = array($afdeling_id, 'Integer');
     }
+    $sql .= "
+            FROM `".$config->getCustomGroup('table_name')."` `b`
+            WHERE `b`.`".$config->getStartCijferRangeField('column_name')."` <= %1
+            AND `b`.`".$config->getEindCijferRangeField('column_name')."` >= %1
+            ORDER BY ";
+    if (!empty($afdeling_id)) {
+      $sql .= " `afdeling_match`,";
+    }
+    $sql .= " `verschil`, `b`.`".$start_cijfer."`, `b`.`".$eind_cijfer."`";
+    
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     while($dao->fetch()) {
       //check if this postcode range is really the right postcode range

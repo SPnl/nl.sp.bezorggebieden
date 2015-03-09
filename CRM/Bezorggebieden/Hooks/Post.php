@@ -13,7 +13,15 @@ class CRM_Bezorggebieden_Hooks_Post {
     }
 
     self::$handledObjects['Address'][$objectId] = true;
-    CRM_Bezorggebieden_Handler_AutoBezorggebiedLink::updateContact($objectRef->contact_id);
+
+    $config = CRM_Geostelsel_Config::singleton();
+    $sql = "SELECT `g`.`".$config->getAfdelingsField('column_name')."` as `afdeling_id`
+                                        FROM `".$config->getGeostelselCustomGroup('table_name')."` g
+                                        WHERE `g`.`entity_id` = %1";
+    $params[1] = array($objectRef->contact_id, 'Integer');
+    $afdeling_id = CRM_Core_DAO::singleValueQuery($sql, $params);
+
+    CRM_Bezorggebieden_Handler_AutoBezorggebiedLink::updateContact($objectRef->contact_id, $afdeling_id);
   }
 
 }
