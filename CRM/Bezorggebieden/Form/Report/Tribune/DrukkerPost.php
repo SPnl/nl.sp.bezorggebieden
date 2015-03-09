@@ -102,6 +102,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPost extends CRM_Report_Form
       OR ".$bezorggebied_contact->getCustomGroupBezorggebiedContact('table_name').".".$bezorggebied_contact->getCustomFieldBezorggebied('column_name')." <= 0
       OR `{$bezorggebied->getCustomGroup('table_name')}`.`".$bezorggebied->getBezorgingPerField('column_name')."` = 'Post'
       )";
+    $this->_where .= " AND ({$this->_aliases['civicrm_contact']}.do_not_mail = 0)";
   }
 
   function alterDisplay(&$rows) {

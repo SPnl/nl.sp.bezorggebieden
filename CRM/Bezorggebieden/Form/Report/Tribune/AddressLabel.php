@@ -167,6 +167,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
       AND ".$bezorggebied_config->getCustomGroupBezorggebiedContact('table_name').".".$bezorggebied_config->getCustomFieldBezorggebied('column_name')." > 0
       AND `{$this->_aliases['bezorg_gebied']}`.`{$this->_custom_fields->per_post['column_name']}` != 'Post'
       )";
+    $this->_where .= " AND ({$this->_aliases['civicrm_contact']}.do_not_mail = 0)";
   }
 
   function groupBy() {
