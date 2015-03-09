@@ -317,12 +317,14 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
   }
   
   function formatRowAsLabel($row) {
-    $val = $row['civicrm_contact_id'] ."\r\n";
+    $val = $row['civicrm_contact_id'];
+    if ($row['bezorg_gebied_deliver_per_post'] == 'Bezorger') {
+      $val .= (!empty($row['bezorg_gebied_deliver_area_name']) ?  ": ".$row['bezorg_gebied_deliver_area_name'] : "");
+    }
+    $val .= "\r\n";
     $val .= $row['civicrm_contact_display_name']. "\r\n";
     $val .= $row['civicrm_address_street_address']."\r\n";
     $val .= $row['civicrm_address_postal_code'].' '.$row['civicrm_address_city']."\r\n";
-    $val .= "\r\n";
-    $val .= $row['bezorg_gebied_deliver_per_post'].(!empty($row['bezorg_gebied_deliver_area_name']) ?  ": ".$row['bezorg_gebied_deliver_area_name'] : "");
     return $val;
   }
   

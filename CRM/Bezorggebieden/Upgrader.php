@@ -31,7 +31,7 @@ class CRM_Bezorggebieden_Upgrader extends CRM_Bezorggebieden_Upgrader_Base {
 
   public function upgrade_1003() {
     $count = CRM_Core_DAO::singleValueQuery('SELECT count(*) FROM civicrm_contact where contact_type = "Individual"');
-    for ($startId = 0; $startId <= $count; $startId += 4000) {
+    for ($startId = 0; $startId <= $count; $startId += 2000) {
       $title = ts('Update bezorggebied (%1 / %2)', array(
         1 => $startId,
         2 => $count,

@@ -48,7 +48,7 @@ function civicrm_api3_bezorggebied_contact_update($params)
                                         LEFT JOIN `".$config->getGeostelselCustomGroup('table_name')."` g ON `g`.`entity_id` = `civicrm_contact`.`id`
                                         WHERE `contact_type` = 'Individual'
                                         ORDER BY `civicrm_address`.`postal_code`
-                                        LIMIT " . $offset . ", 4000");
+                                        LIMIT " . $offset . ", 2000");
     while ($dao->fetch()) {
       CRM_Bezorggebieden_Handler_AutoBezorggebiedLink::updateContactByAddressData($dao->id, $dao->address_id, $dao->postal_code, $dao->country_id, $dao->afdeling_id);
       $updated++;
