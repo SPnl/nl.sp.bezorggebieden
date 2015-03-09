@@ -30,6 +30,11 @@ function civicrm_api3_bezorggebied_contact_update($params)
   $offset = CRM_Core_BAO_Setting::getItem('nl.sp.bezorggebied', 'job.update.offset', NULL, 0);
   $update = CRM_Core_BAO_Setting::getItem('nl.sp.bezorggebied', 'job.update.update', NULL, 1);
 
+  $limit = 1000;
+  if (isset($params['limit']) && is_numeric($params['limit'])) {
+    $limit = $params['limit'];
+  }
+
   $run = false;
   if (isset($params['force']) && $params['force']) {
     $run = true;
@@ -48,7 +53,7 @@ function civicrm_api3_bezorggebied_contact_update($params)
                                         LEFT JOIN `".$config->getGeostelselCustomGroup('table_name')."` g ON `g`.`entity_id` = `civicrm_contact`.`id`
                                         WHERE `contact_type` = 'Individual'
                                         ORDER BY `civicrm_address`.`postal_code`
-                                        LIMIT " . $offset . ", 2000");
+                                        LIMIT " . $offset . ", ".$limit);
     while ($dao->fetch()) {
       CRM_Bezorggebieden_Handler_AutoBezorggebiedLink::updateContactByAddressData($dao->id, $dao->address_id, $dao->postal_code, $dao->country_id, $dao->afdeling_id);
       $updated++;
