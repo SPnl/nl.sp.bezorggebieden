@@ -7,6 +7,25 @@ class CRM_Bezorggebieden_Tokens_Afdeling {
   public static function tokens(&$tokens) {
     $tokens['bezorggebieden']['bezorggebieden.afdelings_berzorggebieden'] = 'Bezorggebieden';
     $tokens['bezorggebieden']['bezorggebieden.palletafdelingen'] = 'Palletafdelingen';
+
+    $tokens['bezorggebieden']['bezorggebieden.totaal_tribunes'] = 'Totaal tribunes';
+    $tokens['bezorggebieden']['bezorggebieden.totaal_pakken'] = 'Pakken';
+    $tokens['bezorggebieden']['bezorggebieden.totaal_pakken_large'] = 'Pakken ('.CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE.' stuks)';
+    $tokens['bezorggebieden']['bezorggebieden.losse_tribunes'] = 'Losse tribunes';
+    $tokens['bezorggebieden']['bezorggebieden.losse_tribunes_large'] = 'Losse tribunes (per '.CRM_Bezorggebieden_Utils_AfdelingTelling::LARGE_PER_PACKAGE.')';
+    $tokens['bezorggebieden']['bezorggebieden.totaal_adresstickers'] = 'Aantal adresstickers';
+  }
+
+
+  /**
+   *
+   * @return CRM_Bezorggebieden_Tokens_Afdeling()
+   */
+  public static function singleton() {
+    if (!self::$singelton) {
+      self::$singelton = new CRM_Bezorggebieden_Tokens_Afdeling();
+    }
+    return self::$singelton;
   }
 
   public function tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null)
@@ -18,18 +37,97 @@ class CRM_Bezorggebieden_Tokens_Afdeling {
       if (in_array('palletafdelingen', $tokens['bezorggebieden']) || array_key_exists('palletafdelingen', $tokens['bezorggebieden'])) {
         $this->palletafdelingen($values, $cids, $job, $tokens, $context);
       }
+      if (in_array('totaal_tribunes', $tokens['bezorggebieden']) || array_key_exists('totaal_tribunes', $tokens['bezorggebieden'])) {
+        $this->totaal_tribunes($values, $cids, $job, $tokens, $context);
+      }
+      if (in_array('totaal_pakken', $tokens['bezorggebieden']) || array_key_exists('totaal_pakken', $tokens['bezorggebieden'])) {
+        $this->totaal_pakken($values, $cids, $job, $tokens, $context);
+      }
+      if (in_array('totaal_pakken_large', $tokens['bezorggebieden']) || array_key_exists('totaal_pakken_large', $tokens['bezorggebieden'])) {
+        $this->totaal_pakken_large($values, $cids, $job, $tokens, $context);
+      }
+      if (in_array('losse_tribunes', $tokens['bezorggebieden']) || array_key_exists('losse_tribunes', $tokens['bezorggebieden'])) {
+        $this->losse_tribunes($values, $cids, $job, $tokens, $context);
+      }
+      if (in_array('losse_tribunes_large', $tokens['bezorggebieden']) || array_key_exists('losse_tribunes_large', $tokens['bezorggebieden'])) {
+        $this->losse_tribunes_large($values, $cids, $job, $tokens, $context);
+      }
+      if (in_array('totaal_adresstickers', $tokens['bezorggebieden']) || array_key_exists('totaal_adresstickers', $tokens['bezorggebieden'])) {
+        $this->totaal_adresstickers($values, $cids, $job, $tokens, $context);
+      }
     }
   }
 
-  /**
-   *
-   * @return CRM_Bezorggebieden_Tokens_Afdeling()
-   */
-  public static function singleton() {
-    if (!self::$singelton) {
-      self::$singelton = new CRM_Bezorggebieden_Tokens_Afdeling();
+  protected function totaal_adresstickers(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    foreach($cids as $cid) {
+      $pallets = CRM_Bezorggebieden_Utils_AfdelingTelling::getPalletAfdelingen($cid);
+      $afdeling = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($cid);
+      $totaal = $afdeling->getMemberCount();
+      foreach($pallets as $pallet) {
+        $totaal = $totaal + $pallet->getMemberCount();
+      }
+      $values[$cid]['bezorggebieden.totaal_adresstickers'] = $totaal;
     }
-    return self::$singelton;
+  }
+
+  protected function losse_tribunes(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    foreach($cids as $cid) {
+      $pallets = CRM_Bezorggebieden_Utils_AfdelingTelling::getPalletAfdelingen($cid);
+      $afdeling = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($cid);
+      $totaal = $afdeling->getDefaultPackagesLos();
+      foreach($pallets as $pallet) {
+        $totaal = $totaal + $pallet->getDefaultPackagesLos();
+      }
+      $values[$cid]['bezorggebieden.losse_tribunes'] = $totaal;
+    }
+  }
+
+  protected function losse_tribunes_large(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    foreach($cids as $cid) {
+      $pallets = CRM_Bezorggebieden_Utils_AfdelingTelling::getPalletAfdelingen($cid);
+      $afdeling = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($cid);
+      $totaal = $afdeling->getLargePackagesLos();
+      foreach($pallets as $pallet) {
+        $totaal = $totaal + $pallet->getLargePackagesLos();
+      }
+      $values[$cid]['bezorggebieden.losse_tribunes_large'] = $totaal;
+    }
+  }
+
+  protected function totaal_pakken_large(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    foreach($cids as $cid) {
+      $pallets = CRM_Bezorggebieden_Utils_AfdelingTelling::getPalletAfdelingen($cid);
+      $afdeling = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($cid);
+      $totaal = $afdeling->getLargePackages();
+      foreach($pallets as $pallet) {
+        $totaal = $totaal + $pallet->getLargePackages();
+      }
+      $values[$cid]['bezorggebieden.totaal_pakken_large'] = $totaal;
+    }
+  }
+
+  protected function totaal_pakken(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    foreach($cids as $cid) {
+      $pallets = CRM_Bezorggebieden_Utils_AfdelingTelling::getPalletAfdelingen($cid);
+      $afdeling = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($cid);
+      $totaal = $afdeling->getDefaultPackages();
+      foreach($pallets as $pallet) {
+        $totaal = $totaal + $pallet->getDefaultPackages();
+      }
+      $values[$cid]['bezorggebieden.totaal_pakken'] = $totaal;
+    }
+  }
+
+  protected function totaal_tribunes(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+    foreach($cids as $cid) {
+      $pallets = CRM_Bezorggebieden_Utils_AfdelingTelling::getPalletAfdelingen($cid);
+      $afdeling = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($cid);
+      $totaal = $afdeling->getTotalTribunes();
+      foreach($pallets as $pallet) {
+        $totaal = $totaal + $pallet->getTotalTribunes();
+      }
+      $values[$cid]['bezorggebieden.totaal_tribunes'] = $totaal;
+    }
   }
 
   protected function palletafdelingen(&$values, $cids, $job = null, $tokens = array(), $context = null) {

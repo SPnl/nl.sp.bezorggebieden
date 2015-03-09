@@ -102,6 +102,8 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
             where
             gebied.entity_id = %1
             AND
+            gebied.`".$bezorggebied->getBezorgingPerField('column_name')."` != 'Post'
+            AND
             m.status_id IN (".implode(", ",CRM_Member_BAO_MembershipStatus::getMembershipStatusCurrent()).")
             AND
             m.membership_type_id IN (".implode(", ", $config->getMembershipTypeIds()).")
