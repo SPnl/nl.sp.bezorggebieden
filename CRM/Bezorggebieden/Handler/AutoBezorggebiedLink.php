@@ -35,11 +35,22 @@ class CRM_Bezorggebieden_Handler_AutoBezorggebiedLink {
 
   private static function saveBezorggebied($contact_id, $value) {
     $config = CRM_Bezorggebieden_Config_BezorggebiedContact::singleton();
-    $field = 'custom_'.$config->getCustomFieldBezorggebied('id');
+
+    $params[1] = array($contact_id, 'Integer');
+    CRM_Core_DAO::executeQuery("DELETE FROM `".$config->getCustomGroupBezorggebiedContact('table_name')."` WHERE `entity_id` = %1", $params);
+
+    $sql = "INSERT INTO `".$config->getCustomGroupBezorggebiedContact('table_name')."`
+            (`entity_id`, `".$config->getCustomFieldBezorggebied('column_name')."`)
+            VALUES (%1, %2)";
+    $params[2] = array($value, 'Integer');
+
+    CRM_Core_DAO::executeQuery($sql, $params);
+
+    /*$field = 'custom_'.$config->getCustomFieldBezorggebied('id');
     civicrm_api3('Contact', 'create', array(
       'id' => $contact_id,
       $field => $value,
-    ));
+    ));*/
   }
 
   private static function determinBezorggebied($postal_code, $country_id, $afdeling_id=null) {
@@ -80,7 +91,7 @@ class CRM_Bezorggebieden_Handler_AutoBezorggebiedLink {
       $sql .= " `afdeling_match`,";
     }
     $sql .= " `verschil`, `b`.`".$start_cijfer."`, `b`.`".$eind_cijfer."`";
-    
+
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     while($dao->fetch()) {
       //check if this postcode range is really the right postcode range
