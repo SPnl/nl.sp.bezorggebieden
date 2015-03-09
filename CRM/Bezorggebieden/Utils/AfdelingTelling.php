@@ -104,6 +104,8 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
             AND
             gebied.`".$bezorggebied->getBezorgingPerField('column_name')."` != 'Post'
             AND
+            `c`.`do_not_mail` = 0
+            AND
             m.status_id IN (".implode(", ",CRM_Member_BAO_MembershipStatus::getMembershipStatusCurrent()).")
             AND
             m.membership_type_id IN (".implode(", ", $config->getMembershipTypeIds()).")
@@ -129,8 +131,13 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
             FROM  `".$bezorggebied->getCustomGroup('table_name')."` `b`
             INNER JOIN `".$bezorggebied_contact->getCustomGroupBezorggebiedContact('table_name')."` `bc` ON `b`.`id` = `bc`.`".$bezorggebied_contact->getCustomFieldBezorggebied('column_name')."`
             INNER JOIN `civicrm_membership` m on m.contact_id = bc.entity_id
+            INNER JOIN civicrm_contact c ON m.contact_id = c.id
             WHERE
-            `b`.`entity_id` = %1 AND `b`.`".$bezorggebied->getBezorgingPerField('column_name')."` != 'Post'
+            `b`.`entity_id` = %1
+            AND
+            `b`.`".$bezorggebied->getBezorgingPerField('column_name')."` != 'Post'
+            AND
+            `c`.`do_not_mail` = 0
             AND
             m.status_id IN (".implode(", ",CRM_Member_BAO_MembershipStatus::getMembershipStatusCurrent()).")
             AND
