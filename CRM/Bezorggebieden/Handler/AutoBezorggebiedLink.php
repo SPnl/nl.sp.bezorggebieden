@@ -88,7 +88,7 @@ class CRM_Bezorggebieden_Handler_AutoBezorggebiedLink {
             AND `b`.`".$config->getEindCijferRangeField('column_name')."` >= %1
             ORDER BY ";
     if (!empty($afdeling_id)) {
-      $sql .= " `afdeling_match`,";
+      $sql .= " `afdeling_match` DESC,";
     }
     $sql .= " `verschil`, `b`.`".$start_cijfer."`, `b`.`".$eind_cijfer."`";
 
