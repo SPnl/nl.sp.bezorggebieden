@@ -205,25 +205,6 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
     $entryFound = FALSE;
     $checkList = array();
     foreach ($rows as $rowNum => $row) {
-
-      if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
-        // not repeat contact display names if it matches with the one
-        // in previous row
-        $repeatFound = FALSE;
-        foreach ($row as $colName => $colVal) {
-          if (CRM_Utils_Array::value($colName, $checkList) &&
-            is_array($checkList[$colName]) &&
-            in_array($colVal, $checkList[$colName])
-          ) {
-            $rows[$rowNum][$colName] = "";
-            $repeatFound = TRUE;
-          }
-          if (in_array($colName, $this->_noRepeats)) {
-            $checkList[$colName][] = $colVal;
-          }
-        }
-      }
-
       if (array_key_exists('civicrm_address_state_province_id', $row)) {
         if ($value = $row['civicrm_address_state_province_id']) {
           $rows[$rowNum]['civicrm_address_state_province_id'] = CRM_Core_PseudoConstant::stateProvince($value, FALSE);
