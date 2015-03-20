@@ -325,6 +325,8 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
     $val .= "\r\n";
     $val .= $row['civicrm_contact_display_name']. "\r\n";
     $val .= $row['civicrm_address_street_address']."\r\n";
+    //isue #333: als een plaatsnaam te lang is dan de plaatsnaam op volgende regel
+    //dit is slechts bij benadering.
     if (strlen($row['civicrm_address_city']) > 15) {
       $val .= $row['civicrm_address_postal_code'] . "\r\n" . $row['civicrm_address_city'] . "\r\n";
     } else {
