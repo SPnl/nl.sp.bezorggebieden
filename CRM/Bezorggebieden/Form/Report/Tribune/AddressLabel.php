@@ -325,7 +325,11 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
     $val .= "\r\n";
     $val .= $row['civicrm_contact_display_name']. "\r\n";
     $val .= $row['civicrm_address_street_address']."\r\n";
-    $val .= $row['civicrm_address_postal_code'].' '.$row['civicrm_address_city']."\r\n";
+    if (strlen($row['civicrm_address_city']) > 15) {
+      $val .= $row['civicrm_address_postal_code'] . "\r\n" . $row['civicrm_address_city'] . "\r\n";
+    } else {
+      $val .= $row['civicrm_address_postal_code'] . ' ' . $row['civicrm_address_city'] . "\r\n";
+    }
     return $val;
   }
   
