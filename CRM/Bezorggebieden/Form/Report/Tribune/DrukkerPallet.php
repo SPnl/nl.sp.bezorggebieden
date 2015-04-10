@@ -133,7 +133,43 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
 
   function alterDisplay(&$rows)
   {
+    $totaal = 0;
+    $pakken = 0;
+    $pakken_los = 0;
+    $pakken_zomer = 0;
+    $pakken_zomer_los = 0;
+    $previous_pallet_afdeling = false;
+    $newRows = array();
+    $i = 0;
+    $previousRow = false;
     foreach($rows as $rowNum => $row) {
+      $rowI = $rowNum;
+      if ($previous_pallet_afdeling === false) {
+        $previous_pallet_afdeling = $row['civicrm__pallet_contact_pallet_id'];
+      }
+
+      if ($row['civicrm__pallet_contact_pallet_id'] != $previous_pallet_afdeling) {
+        foreach($previousRow as $key => $v) {
+          $newRows[$i][$key] = '';
+        }
+
+        $newRows[$i]['civicrm__pallet_contact_display_name'] = $previousRow['civicrm__pallet_contact_display_name'];
+        $newRows[$i]['civicrm__pallet_contact_pallet_id'] = $previousRow['civicrm__pallet_contact_pallet_id'];
+        $newRows[$i]['total_tribunes'] = $totaal;
+        $newRows[$i]['pakken'] = $pakken;
+        $newRows[$i]['pakken_los'] = $pakken_los;
+        $newRows[$i]['pakken_zomer'] = $pakken_zomer;
+        $newRows[$i]['pakken_zomer_los'] = $pakken_zomer_los;
+
+        $totaal = 0;
+        $pakken = 0;
+        $pakken_los = 0;
+        $pakken_zomer = 0;
+        $pakken_zomer_los = 0;
+        $i++;
+      }
+
+
       if (isset($row['civicrm_address_country_id'])) {
         if ($value = $row['civicrm_address_country_id']) {
           $rows[$rowNum]['civicrm_address_country_id'] = CRM_Core_PseudoConstant::country($value, FALSE);
@@ -145,14 +181,44 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
         }
       }
 
-      $afdeling_info = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($row['civicrm_contact_id']);
-      $rows[$rowNum]['leden'] = $afdeling_info->getMemberCount();
-      $rows[$rowNum]['extra'] = $afdeling_info->getExtraTribunes();
-      $rows[$rowNum]['total_tribunes'] = $afdeling_info->getTotalTribunes();
-      $rows[$rowNum]['pakken'] = $afdeling_info->getDefaultPackages();
-      $rows[$rowNum]['pakken_los'] = $afdeling_info->getDefaultPackagesLos();
-      $rows[$rowNum]['pakken_zomer'] = $afdeling_info->getLargePackages();
-      $rows[$rowNum]['pakken_zomer_los'] = $afdeling_info->getLargePackagesLos();
+      if ($row['civicrm_contact_id']) {
+        $afdeling_info = CRM_Bezorggebieden_Utils_AfdelingTelling::getAfdelingTelling($row['civicrm_contact_id']);
+        $rows[$rowNum]['leden'] = $afdeling_info->getMemberCount();
+        $rows[$rowNum]['extra'] = $afdeling_info->getExtraTribunes();
+        $rows[$rowNum]['total_tribunes'] = $afdeling_info->getTotalTribunes();
+        $rows[$rowNum]['pakken'] = $afdeling_info->getDefaultPackages();
+        $rows[$rowNum]['pakken_los'] = $afdeling_info->getDefaultPackagesLos();
+        $rows[$rowNum]['pakken_zomer'] = $afdeling_info->getLargePackages();
+        $rows[$rowNum]['pakken_zomer_los'] = $afdeling_info->getLargePackagesLos();
+      }
+
+      $totaal += $rows[$rowNum]['total_tribunes'];
+      $pakken += $rows[$rowNum]['pakken'];
+      $pakken_los += $rows[$rowNum]['pakken_los'];
+      $pakken_zomer += $rows[$rowNum]['pakken_zomer'];
+      $pakken_zomer_los += $rows[$rowNum]['pakken_zomer_los'];
+
+
+      $newRows[$i] = $rows[$rowNum];
+      $i ++;
+
+      $previous_pallet_afdeling = $row['civicrm__pallet_contact_pallet_id'];
+      $previousRow = $rows[$rowNum];
     }
+
+    if ($previousRow) {
+      foreach($previousRow as $key => $v) {
+        $newRows[$i][$key] = '';
+      }
+      $newRows[$i]['civicrm__pallet_contact_display_name'] = $previousRow['civicrm__pallet_contact_display_name'];
+      $newRows[$i]['civicrm__pallet_contact_pallet_id'] = $previousRow['civicrm__pallet_contact_pallet_id'];
+      $newRows[$i]['total_tribunes'] = $totaal;
+      $newRows[$i]['pakken'] = $pakken;
+      $newRows[$i]['pakken_los'] = $pakken_los;
+      $newRows[$i]['pakken_zomer'] = $pakken_zomer;
+      $newRows[$i]['pakken_zomer_los'] = $pakken_zomer_los;
+    }
+
+    $rows = $newRows;
   }
 }
