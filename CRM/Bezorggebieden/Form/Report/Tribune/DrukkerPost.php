@@ -5,6 +5,9 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPost extends CRM_Report_Form
 
   function __construct()
   {
+
+    $this->_exposeContactID = false;
+
     $this->_columns = array(
       'civicrm_contact' => array(
         'dao' => 'CRM_Contact_DAO_Contact',
@@ -12,7 +15,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPost extends CRM_Report_Form
           'id' => array(
             'required' => TRUE,
             'default' => TRUE,
-            'no_display' => true,
+            'no_display' => false,
             'no_repeat' => TRUE,
           ),
           'display_name' => array(

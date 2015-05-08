@@ -14,6 +14,8 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
   
   function __construct() {
     $this->fetchCustom();
+
+    $this->_exposeContactID = false;
     
     $this->_columns = array(
       'civicrm_contact' => array(
@@ -21,8 +23,9 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
         'fields' => array(
           'id' => array(
             'required' => TRUE,
+            'default' => true,
             'default' => TRUE,
-            'no_display' => true,
+            'no_display' => false,
           ),
           'display_name' => array(
             'title' => ts('Contact Name'),
