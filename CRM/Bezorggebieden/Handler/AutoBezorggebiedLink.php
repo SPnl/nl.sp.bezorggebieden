@@ -18,7 +18,7 @@ class CRM_Bezorggebieden_Handler_AutoBezorggebiedLink {
         $value = self::determinBezorggebied($address->postal_code, $address->country_id, $afdeling_id);
       }
     } catch (Exception $e) {
-      return $value;
+      //do nothing
     }
 
     self::saveBezorggebied($contact_id, $value);

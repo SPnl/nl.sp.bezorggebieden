@@ -285,7 +285,7 @@ function bezorggebieden_civicrm_customFieldOptions($fieldID, &$options, $detaile
 }
 
 function bezorggebieden_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
-  CRM_Bezorggebieden_Hooks_Post::post($op, $objectName, $objectName, $objectRef);
+  CRM_Bezorggebieden_Hooks_Post::post($op, $objectName, $objectId, $objectRef);
 }
 
 function bezorggebieden_civicrm_tokens(&$tokens) {
@@ -296,4 +296,57 @@ function bezorggebieden_civicrm_tokenValues(&$values, $cids, $job = null, $token
 {
   $afdeling_tokens = CRM_Bezorggebieden_Tokens_Afdeling::singleton();
   $afdeling_tokens->tokenValues($values, $cids, $job, $tokens, $context);
+}
+
+/**
+ * Implementation of hook_civicrm_navigationMenu
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
+ */
+function bezorggebieden_civicrm_navigationMenu( &$params ) {
+  $maxKey = _bezorggebieden_getMenuKeyMax($params);
+
+  $parent =_bezorggebieden_get_parent_id_navigation_menu($params, 'Contacts');
+
+  $parent['child'][$maxKey+1] = array (
+    'attributes' => array (
+      "label"=> ts('Update bezorggebieden'),
+      "name"=> ts('Update Bezorggebieden'),
+      "url"=> "civicrm/bezorggebieden/update",
+      "permission" => "administer CiviCRM",
+      "parentID" => $parent['attributes']['navID'],
+      "active" => 1,
+    ),
+    'child' => array(),
+  );
+
+}
+
+function _bezorggebieden_get_parent_id_navigation_menu(&$menu, $path, &$parent = NULL) {
+  // If we are done going down the path, insert menu
+  if (empty($path)) {
+    return $parent;
+  } else {
+    // Find an recurse into the next level down
+    $found = false;
+    $path = explode('/', $path);
+    $first = array_shift($path);
+    foreach ($menu as $key => &$entry) {
+      if ($entry['attributes']['name'] == $first) {
+        if (!$entry['child']) $entry['child'] = array();
+        $found = _bezorggebieden_get_parent_id_navigation_menu($entry['child'], implode('/', $path), $entry);
+      }
+    }
+    return $found;
+  }
+}
+
+function _bezorggebieden_getMenuKeyMax($menuArray) {
+  $max = array(max(array_keys($menuArray)));
+  foreach($menuArray as $v) {
+    if (!empty($v['child'])) {
+      $max[] = _bezorggebieden_getMenuKeyMax($v['child']);
+    }
+  }
+  return max($max);
 }

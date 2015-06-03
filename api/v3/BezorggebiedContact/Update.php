@@ -48,7 +48,8 @@ function civicrm_api3_bezorggebied_contact_update($params)
   $oldOffset = $offset;
 
   if ($run) {
-    $dao = CRM_Core_DAO::executeQuery("SELECT `civicrm_contact`.`id`, `g`.`".$config->getAfdelingsField('column_name')."` as `afdeling_id`, civicrm_address.id as address_id, civicrm_address.postal_code, civicrm_address.country_id FROM `civicrm_contact`
+    $dao = CRM_Core_DAO::executeQuery("SELECT `civicrm_contact`.`id`, `g`.`".$config->getAfdelingsField('column_name')."` as `afdeling_id`, civicrm_address.id as address_id, civicrm_address.postal_code, civicrm_address.country_id
+                                        FROM `civicrm_contact`
                                         LEFT JOIN `civicrm_address` ON `civicrm_address`.contact_id = civicrm_contact.id
                                         LEFT JOIN `".$config->getGeostelselCustomGroup('table_name')."` g ON `g`.`entity_id` = `civicrm_contact`.`id`
                                         WHERE `contact_type` = 'Individual'

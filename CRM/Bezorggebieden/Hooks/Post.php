@@ -11,10 +11,9 @@ class CRM_Bezorggebieden_Hooks_Post {
     if (isset(self::$handledObjects['Address']) && isset(self::$handledObjects['Address'][$objectId])) {
       return;
     }
-    if ($op != 'create' || $op != 'edit') {
+    if ($op != 'create' && $op != 'edit') {
       return;
     }
-
     self::$handledObjects['Address'][$objectId] = true;
 
     $config = CRM_Geostelsel_Config::singleton();
