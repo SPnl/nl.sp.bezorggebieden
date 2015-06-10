@@ -14,8 +14,12 @@ class CRM_Bezorggebieden_Hooks_Post {
     if ($op != 'create' && $op != 'edit') {
       return;
     }
+    if (!$objectRef->contact_id) {
+      //address does not belong to a contact but probably to an event
+      //so don't update the contact with bezorggebied information
+      return;
+    }
     self::$handledObjects['Address'][$objectId] = true;
-
     $config = CRM_Geostelsel_Config::singleton();
     $sql = "SELECT `g`.`".$config->getAfdelingsField('column_name')."` as `afdeling_id`
                                         FROM `".$config->getGeostelselCustomGroup('table_name')."` g
