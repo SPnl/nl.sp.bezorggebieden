@@ -107,7 +107,6 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
     parent::where();
     $config = CRM_Bezorggebieden_Config_TribuneAdres::singleton();
     $this->_where .= " AND {$this->_aliases['civicrm_address']}.location_type_id = '".$config->tribune_adres_id."'";
-    $this->_where .= " AND {$this->_aliases['civicrm_pallet_address']}.location_type_id = '".$config->tribune_adres_id."'";
   }
 
   function modifyColumnHeaders() {
