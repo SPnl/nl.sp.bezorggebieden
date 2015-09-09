@@ -8,8 +8,10 @@ class CRM_Bezorggebieden_Handler_AutoBezorggebiedLink {
     //determine bezorggebied for contact
 
     try {
-      $address = CRM_Core_DAO::executeQuery("SELECT * FROM `civicrm_address` WHERE `contact_id` = %1 AND is_primary = 1", array(
+      $config = CRM_Bezorggebieden_Config_BezorggebiedContact::singleton();
+      $address = CRM_Core_DAO::executeQuery("SELECT * FROM `civicrm_address` WHERE `contact_id` = %1 AND (location_type_id = %2 OR is_primary = 1) ORDER BY is_primary LIMIT 0,1", array(
         1 => array($contact_id, 'Integer'),
+        2 => array($config->getBezorggebiedLocationType('id'), 'Integer'),
       ));
 
       if (!$address->fetch()) {

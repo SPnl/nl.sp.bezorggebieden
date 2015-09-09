@@ -8,9 +8,13 @@ class CRM_Bezorggebieden_Config_BezorggebiedContact {
 
   private $cfBezorggebiedContact;
 
+  private $bezorggebiedLocationType;
+
   private function __construct() {
     $this->cgBezorggebiedContact = civicrm_api3('CustomGroup', 'getsingle', array('name' => 'bezorggebied_contact'));
     $this->cfBezorggebiedContact = civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorggebied', 'custom_group_id' => $this->cfBezorggebiedContact['id']));
+
+    $this->bezorggebiedLocationType = civicrm_api3('LocationType', 'getsingle', array('name' => 'Thuis'));
   }
 
   /**
@@ -21,6 +25,10 @@ class CRM_Bezorggebieden_Config_BezorggebiedContact {
       self::$singleton = new CRM_Bezorggebieden_Config_BezorggebiedContact();
     }
     return self::$singleton;
+  }
+
+  public function getBezorggebiedLocationType($key) {
+    return $this->bezorggebiedLocationType[$key];
   }
 
   public function getCustomGroupBezorggebiedContact($key) {
