@@ -13,10 +13,10 @@ class CRM_Bezorggebieden_Page_Update extends CRM_Core_Page {
     $queue = self::getQueue(true);
     //add tasks to queue
     $count = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM civicrm_contact");
-    for($i=0; $i<$count; $i = $i + 1000) {
+    for($i=0; $i<$count; $i = $i + 200) {
       $task = new CRM_Queue_Task(
         array('CRM_Bezorggebieden_Page_Update', 'Update'), //call back method
-        array($i, 1000),
+        array($i, 200),
         'Updated '.$i.' contacts'
       );
       $queue->createItem($task);
@@ -40,31 +40,19 @@ class CRM_Bezorggebieden_Page_Update extends CRM_Core_Page {
     $bezorggebied_config = CRM_Bezorggebieden_Config_BezorggebiedContact::singleton();
 
     $sql = "SELECT `civicrm_contact`.`id`,
-              `g`.`".$config->getAfdelingsField('column_name')."` as `afdeling_id`,
-              civicrm_address.id as address_id,
-              civicrm_address.postal_code,
-              civicrm_address.country_id
+               `g`.`".$config->getAfdelingsField('column_name')."` as `afdeling_id`
             FROM `civicrm_contact`
-            LEFT JOIN `civicrm_address` ON `civicrm_address`.id  = (
-              SELECT a2.id as id
-              FROM `civicrm_address` a2
-              WHERE a2.`contact_id` = civicrm_contact.id
-              AND (a2.location_type_id = %1 OR a2.is_primary = 1)
-              ORDER BY is_primary
-              LIMIT 0,1
-            )
             LEFT JOIN `".$config->getGeostelselCustomGroup('table_name')."` g ON `g`.`entity_id` = `civicrm_contact`.`id`
             WHERE `contact_type` = 'Individual'
-            ORDER BY `civicrm_address`.`postal_code`
-            LIMIT %2, %3";
+            ORDER BY `civicrm_contact`.`id` ASC
+            LIMIT %1, %2";
 
-    $params[1] = array($bezorggebied_config->getBezorggebiedLocationType('id'), 'Integer');
-    $params[2] = array($offset, 'Integer');
-    $params[3] = array($limit, 'Integer');
+    $params[1] = array($offset, 'Integer');
+    $params[2] = array($limit, 'Integer');
 
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
     while ($dao->fetch()) {
-      CRM_Bezorggebieden_Handler_AutoBezorggebiedLink::updateContactByAddressData($dao->id, $dao->address_id, $dao->postal_code, $dao->country_id, $dao->afdeling_id);
+      CRM_Bezorggebieden_Handler_AutoBezorggebiedLink::updateContact($dao->id, $dao->afdeling_id);
     }
 
     return true;
