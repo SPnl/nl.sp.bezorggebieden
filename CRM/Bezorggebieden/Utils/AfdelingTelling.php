@@ -177,7 +177,7 @@ class CRM_Bezorggebieden_Utils_AfdelingTelling {
     $sql = "SELECT pallet.contact_id
             FROM `civicrm_address` `master`
             INNER JOIN `civicrm_address` `pallet` ON `master`.id = `pallet`.`master_id`
-            WHERE master.contact_id = %1 AND master.location_type_id = %2 AND pallet.location_type_id = %2";
+            WHERE master.contact_id = %1 AND pallet.location_type_id = %2";
     $params[1] = array($afdeling_id, 'Integer');
     $params[2] = array($tribune_adres->tribune_adres_id, 'Integer');
     $dao = CRM_Core_DAO::executeQuery($sql, $params);
