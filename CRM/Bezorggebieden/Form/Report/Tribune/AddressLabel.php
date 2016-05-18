@@ -153,6 +153,9 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
          FROM  civicrm_membership {$this->_aliases['civicrm_membership']}\n
            LEFT JOIN civicrm_membership_status {$this->_aliases['civicrm_membership_status']} ON {$this->_aliases['civicrm_membership_status']}.id = {$this->_aliases['civicrm_membership']}.status_id
          INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']} ON {$this->_aliases['civicrm_membership']}.contact_id = {$this->_aliases['civicrm_contact']}.id\n
+ 
+         INNER JOIN civicrm_acl_contact_cache aclContactCache ON {$this->_aliases['civicrm_contact']}.id = aclContactCache.contact_id
+         
          LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']}
             ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_address']}.contact_id 
             AND {$this->_aliases['civicrm_address']}.is_primary = 1\n
@@ -164,6 +167,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
 
   function where() {
     parent::where();
+    
     $bezorggebied_config = CRM_Bezorggebieden_Config_BezorggebiedContact::singleton();
     $this->_where .= " AND (
       ".$bezorggebied_config->getCustomGroupBezorggebiedContact('table_name').".".$bezorggebied_config->getCustomFieldBezorggebied('column_name')." IS NOT NULL
@@ -193,7 +197,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
     // get the acl clauses built before we assemble the query
     $this->buildACLClause($this->_aliases['civicrm_contact']);
     $sql = $this->buildQuery(TRUE);
-
+//echo $sql; exit;
     $rows = array();
     $this->buildRows($sql, $rows);
 
