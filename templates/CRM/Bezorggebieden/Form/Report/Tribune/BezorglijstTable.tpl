@@ -22,11 +22,11 @@
   {/if}
 
   <tr style="page-break-inside: avoid !important">
-    <td>{$row.civicrm_contact_display_name}</td>
-    <td>{$row.civicrm_address_street_address}</td>
-    <td>{$row.civicrm_address_postal_code}</td>
-    <td>{$row.civicrm_address_city}</td>
-    <td>{$row.civicrm_country_name}</td>    
+    <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_contact_display_name}</td>
+    <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_address_street_address}</td>
+    <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_address_postal_code}</td>
+    <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_address_city}</td>
+    <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_country_name}</td>    
   </tr>
 
 {/foreach}  
