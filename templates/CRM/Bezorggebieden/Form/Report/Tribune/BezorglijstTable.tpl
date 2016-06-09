@@ -21,7 +21,7 @@
     {assign var="inTable" value="yes"}
   {/if}
 
-  <tr>
+  <tr style="page-break-inside: avoid !important">
     <td>{$row.civicrm_contact_display_name}</td>
     <td>{$row.civicrm_address_street_address}</td>
     <td>{$row.civicrm_address_postal_code}</td>
