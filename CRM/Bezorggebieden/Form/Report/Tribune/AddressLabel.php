@@ -130,14 +130,15 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
   }
   
   protected function fetchCustom() {
-    $this->_custom_fields 						= new stdClass();
-    $this->_custom_fields->group 				= civicrm_api3('CustomGroup', 'getsingle', array("name" => "Bezorggebieden"));
-    $this->_custom_fields->name 				= civicrm_api3('CustomField', 'getsingle', array("name" => "Bezorggebied_naam", "custom_group_id" => $this->_custom_fields->group['id']));
-    $this->_custom_fields->start_cijfer_range 	= civicrm_api3('CustomField', 'getsingle', array("name" => "start_cijfer_range", "custom_group_id" => $this->_custom_fields->group['id']));
-    $this->_custom_fields->eind_cijfer_range 	= civicrm_api3('CustomField', 'getsingle', array("name" => "eind_cijfer_range", "custom_group_id" => $this->_custom_fields->group['id']));
-    $this->_custom_fields->start_letter_range 	= civicrm_api3('CustomField', 'getsingle', array("name" => "start_letter_range", "custom_group_id" => $this->_custom_fields->group['id']));
-    $this->_custom_fields->eind_letter_range 	= civicrm_api3('CustomField', 'getsingle', array("name" => "eind_letter_range", "custom_group_id" => $this->_custom_fields->group['id']));
-    $this->_custom_fields->per_post 			= civicrm_api3('CustomField', 'getsingle', array("name" => "Bezorging_per", "custom_group_id" => $this->_custom_fields->group['id']));
+    $cfsp = CRM_Spgeneric_CustomField::singleton();
+    $this->_custom_fields = new stdClass;
+    $this->_custom_fields->group = $cfsp->getGroupByName('Bezorggebieden');
+    $this->_custom_fields->name = $cfsp->getField('Bezorggebieden', 'Bezorggebied_naam');
+    $this->_custom_fields->start_cijfer_range = $cfsp->getField('Bezorggebieden', 'Start_cijfer_range');
+    $this->_custom_fields->eind_cijfer_range = $cfsp->getField('Bezorggebieden', 'Eind_cijfer_range');
+    $this->_custom_fields->start_letter_range = $cfsp->getField('Bezorggebieden', 'Start_letter_range');
+    $this->_custom_fields->eind_letter_range = $cfsp->getField('Bezorggebieden', 'End_letter_range');
+    $this->_custom_fields->per_post = $cfsp->getField('Bezorggebieden', 'Bezorging_per');
   }
 
   function preProcess() {

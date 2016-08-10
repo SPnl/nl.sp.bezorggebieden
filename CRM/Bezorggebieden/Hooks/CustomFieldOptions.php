@@ -3,8 +3,8 @@
 class CRM_Bezorggebieden_Hooks_CustomFieldOptions {
 
   public static function options($fieldID, &$options, $detailedFormat = false ) {
-    $config = CRM_Bezorggebieden_Config_BezorggebiedContact::singleton();
-    if ($fieldID != $config->getCustomFieldBezorggebied('id')) {
+    $cfsp = CRM_Spgeneric_CustomField::singleton();
+    if ($fieldID != $cfsp->getFieldId('bezorggebied_contact', 'Bezorggebied')) {
       return;
     }
 

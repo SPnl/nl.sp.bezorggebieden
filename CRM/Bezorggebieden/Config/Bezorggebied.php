@@ -19,13 +19,14 @@ class CRM_Bezorggebieden_Config_Bezorggebied {
   private $bezorging_per;
 
   private function __construct() {
-    $this->cgBezorggebied = civicrm_api3('CustomGroup', 'getsingle', array('name' => 'Bezorggebieden'));
-    $this->naam = civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorggebied_naam', 'custom_group_id' => $this->cgBezorggebied['id']));
-    $this->start_cijfer_range = civicrm_api3('CustomField', 'getsingle', array('name' => 'Start_cijfer_range', 'custom_group_id' => $this->cgBezorggebied['id']));
-    $this->eind_cijfer_range = civicrm_api3('CustomField', 'getsingle', array('name' => 'Eind_cijfer_range', 'custom_group_id' => $this->cgBezorggebied['id']));
-    $this->start_letter_range= civicrm_api3('CustomField', 'getsingle', array('name' => 'Start_letter_range', 'custom_group_id' => $this->cgBezorggebied['id']));
-    $this->eind_letter_range = civicrm_api3('CustomField', 'getsingle', array('name' => 'Eind_letter_range', 'custom_group_id' => $this->cgBezorggebied['id']));
-    $this->bezorging_per = civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorging_per', 'custom_group_id' => $this->cgBezorggebied['id']));
+    $cfsp = CRM_Spgeneric_CustomField::singleton();
+    $this->cgBezorggebied = $cfsp->getGroupByName('Bezorggebieden');
+    $this->naam = $cfsp->getField('Bezorggebieden', 'Bezorggebied_naam');
+    $this->start_cijfer_range = $cfsp->getField('Bezorggebieden', 'Start_cijfer_range');
+    $this->eind_cijfer_range =  $cfsp->getField('Bezorggebieden', 'Eind_cijfer_range');
+    $this->start_letter_range=  $cfsp->getField('Bezorggebieden', 'Start_letter_range');
+    $this->eind_letter_range = $cfsp->getField('Bezorggebieden', 'Eind_letter_range');
+    $this->bezorging_per = $cfsp->getField('Bezorggebieden', 'Bezorging_per');
   }
 
   /**

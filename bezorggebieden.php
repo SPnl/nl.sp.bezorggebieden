@@ -115,19 +115,19 @@ function bezorggebieden_civicrm_validateForm( $formName, &$fields, &$files, &$fo
 
 	
 	// Fetch the custom group properties
-	$customGroupObject		= civicrm_api3('CustomGroup', 'getsingle', array('name' => 'Bezorggebieden'));
+  $cfsp = CRM_Spgeneric_CustomField::singleton();
+  $customGroupObject		= $cfsp->getGroupByName('Bezorggebieden');
 
 	// Check if the posted form is the deliver area form
 	if($formName == "CRM_Contact_Form_CustomData" && in_array($customGroupObject['id'], array_keys($fields['hidden_custom_group_count']))) {
 		
 		// Fetch all the custom fields properties
-		$nameObject 			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorggebied_naam', 'custom_group_id' => $customGroupObject['id']));
-		$startIntObject 		= civicrm_api3('CustomField', 'getsingle', array('name' => 'Start_cijfer_range', 'custom_group_id' => $customGroupObject['id']));
-		$endIntObject 			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Eind_cijfer_range', 'custom_group_id' => $customGroupObject['id']));
-		$startCharObject 		= civicrm_api3('CustomField', 'getsingle', array('name' => 'Start_letter_range', 'custom_group_id' => $customGroupObject['id']));
-		$endCharObject 			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Eind_letter_range', 'custom_group_id' => $customGroupObject['id']));
-		$bezorgerObject			= civicrm_api3('CustomField', 'getsingle', array('name' => 'Bezorging_per', 'custom_group_id' => $customGroupObject['id']));
-		
+    $nameObject 			= $cfsp->getField('Bezorggebieden', 'Bezorggebied_naam');
+    $startIntObject = $cfsp->getField('Bezorggebieden', 'Start_cijfer_range');
+    $endIntObject = $cfsp->getField('Bezorggebieden', 'Eind_cijfer_range');
+    $startCharObject = $cfsp->getField('Bezorggebieden', 'Start_letter_range');
+    $endCharObject = $cfsp->getField('Bezorggebieden', 'Eind_letter_range');
+    $bezorgerObject = $cfsp->getField('Bezorggebieden', 'Bezorging_per');
 
 		// Create an array with the filter field names
 		$filterFieldNames =  array(	
