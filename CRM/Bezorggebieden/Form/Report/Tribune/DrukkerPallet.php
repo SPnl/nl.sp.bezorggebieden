@@ -60,6 +60,17 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
         ),
         'grouping' => 'contact-fields',
       ),
+      'civicrm_pallet_email' => array(
+        'alias' => 'civicrm_pallet_email',
+        'dao' => 'CRM_Core_DAO_Email',
+        'fields' => array(
+          'email' => array(
+            'title' => ts('E-mailadres van pallet afdeling'),
+            'default' => true,
+          ),
+        ),
+        'grouping' => 'contact-fields',
+      ),
       'civicrm_pallet_address' => array(
         'alias' => 'civicrm_pallet_address',
         'dao' => 'CRM_Core_DAO_Address',
@@ -100,7 +111,8 @@ class CRM_Bezorggebieden_Form_Report_Tribune_DrukkerPallet extends CRM_Report_Fo
         XOR
         ({$this->_aliases['civicrm_address']}.master_id IS NULL AND {$this->_aliases['civicrm_address']}.id = {$this->_aliases['civicrm_pallet_address']}.id)
       )
-      LEFT JOIN civicrm_contact {$this->_aliases['civicrm__pallet_contact']} ON {$this->_aliases['civicrm_pallet_address']}.contact_id = {$this->_aliases['civicrm__pallet_contact']}.id";
+      LEFT JOIN civicrm_contact {$this->_aliases['civicrm__pallet_contact']} ON {$this->_aliases['civicrm_pallet_address']}.contact_id = {$this->_aliases['civicrm__pallet_contact']}.id
+      LEFT JOIN civicrm_email {$this->_aliases['civicrm_pallet_email']} ON {$this->_aliases['civicrm__pallet_contact']}.id = {$this->_aliases['civicrm_pallet_email']}.contact_id AND {$this->_aliases['civicrm_pallet_email']}.is_primary = 1";
   }
 
   function where() {
