@@ -171,7 +171,7 @@ class CRM_Bezorggebieden_Form_Report_Tribune_Bezorglijst extends CRM_Report_Form
     $this->_where .= " AND (
       ".$bezorggebied_config->getCustomGroupBezorggebiedContact('table_name').".".$bezorggebied_config->getCustomFieldBezorggebied('column_name')." IS NOT NULL
       AND ".$bezorggebied_config->getCustomGroupBezorggebiedContact('table_name').".".$bezorggebied_config->getCustomFieldBezorggebied('column_name')." > 0
-      AND `{$this->_aliases['bezorg_gebied']}`.`{$this->_custom_fields->per_post['column_name']}` != 'Post'
+      AND `{$this->_aliases['bezorg_gebied']}`.`{$this->_custom_fields->per_post['column_name']}` == 'Bezorger'
       )
       AND {$this->_aliases['civicrm_membership']}.membership_type_id in (4,5,13)
       ";
