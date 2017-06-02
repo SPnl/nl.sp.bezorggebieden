@@ -16,7 +16,6 @@
 	  <th>Straat</th>
 	  <th>Postcode</th>
 	  <th>Gemeente</th>
-	  <th>Land</th>
     </tr>
     {assign var="inTable" value="yes"}
   {/if}
@@ -26,7 +25,6 @@
     <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_address_street_address}</td>
     <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_address_postal_code}</td>
     <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_address_city}</td>
-    <td style="text-align: left; margin: 0px 4px 0px 1px; white-space: nowrap;">{$row.civicrm_country_name}</td>    
   </tr>
 
 {/foreach}  
