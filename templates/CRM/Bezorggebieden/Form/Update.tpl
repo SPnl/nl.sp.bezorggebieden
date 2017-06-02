@@ -26,7 +26,7 @@
             {if (isset($found))}
                 <tr>
                     <td>
-                        Er zijn {$found} lidmaatschappen gevonden die verlengd gaan worden. <br>
+                        Er zijn {$found} leden gevonden waarvan de bezorggebieden geupdate gaan worden. <br>
                         Weet u het zeker?
                         <input type="hidden" name="continue" value="1" />
                     </td>
