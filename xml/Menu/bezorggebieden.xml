@@ -2,7 +2,7 @@
 <menu>
   <item>
     <path>civicrm/bezorggebieden/update</path>
-    <page_callback>CRM_Bezorggebieden_Page_Update</page_callback>
+    <page_callback>CRM_Bezorggebieden_Form_Update</page_callback>
     <title>Bezorggebieden update</title>
     <access_arguments>administer CiviCRM</access_arguments>
   </item>
