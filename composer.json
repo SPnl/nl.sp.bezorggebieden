@@ -1,0 +1,13 @@
+{
+    "name": "spnl/nl.sp.bezorggebieden",
+    "description": "Geeft de mogelijkheid om bezorggebieden te definieren bij een organisatie en er kunnen verschillende rapporten van de bezorgdata gegeneerd worden.",
+    "type": "civicrm-module",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "CiviCooP",
+            "email": "helpdesk@civicoop.org"
+        }
+    ],
+    "require": {}
+}
