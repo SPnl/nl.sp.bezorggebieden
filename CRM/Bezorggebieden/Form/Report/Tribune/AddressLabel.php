@@ -282,9 +282,9 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
             $pdf->addPdfLabel('');
           }
 
-	        $label = "===========================\r\n";
+	        $label = "========================\r\n";
 	        $label .= $row['afdeling_afdeling']."\r\n";
-	        $label .= "===========================\r\n";
+	        $label .= "========================\r\n";
           
           $pdf->AddPdfLabel($label);
           $i = 2;
