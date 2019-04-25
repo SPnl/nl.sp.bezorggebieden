@@ -254,8 +254,10 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
   
   function endPostProcess(&$rows = NULL) {
     if ($this->_outputMode == 'pdf') {
-      $format_name = $this->_params['label_format'];
-      $format = CRM_Core_BAO_LabelFormat::getByName($format_name);
+      // TODO: This is hardcoded but should be selectable in the form
+      //       when we figure out how to build the report form properly
+      //       in 5.7
+      $format = CRM_Core_BAO_LabelFormat::getByName('custom_1');
       if (!$format) {
         throw new Exception('Label format '.$format_name.' not found');
       }
@@ -322,36 +324,12 @@ class CRM_Bezorggebieden_Form_Report_Tribune_AddressLabel extends CRM_Report_For
     }
     return $val;
   }
-  
-  function buildInstanceAndButtons() {
-    CRM_Report_Form_Instance::buildForm($this);
 
-    $label = $this->_id ? ts('Update Report') : ts('Create Report');
-
-    $this->addElement('submit', $this->_instanceButtonName, $label);
-
-    if ($this->_id) {
-      $this->addElement('submit', $this->_createNewButtonName, ts('Save a Copy') . '...');
-    }
-    if ($this->_instanceForm) {
-      $this->assign('instanceForm', TRUE);
-    }   
-
-    $label_formats = CRM_Core_BAO_LabelFormat::getList(true, 'label_format');
-    $this->addElement('select', 'label_format', ts('Label format'), $label_formats);
-
-    $label = ts('Print address labels');
-    $this->addElement('submit', $this->_pdfButtonName, $label);
-
-    $this->addChartOptions();
-    $this->addButtons(array(
-        array(
-          'type' => 'submit',
-          'name' => ts('Preview Report'),
-          'isDefault' => TRUE,
-        ),
-      )
-    );
+  function getActions($instanceId) {
+    $actions = parent::getActions($instanceId);
+    $actions['report_instance.pdf']['title'] = ts('Print address labels');
+    unset($actions['report_instance.delete']);
+    return $actions;
   }
   
 }
